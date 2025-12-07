@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Bookify.Domain.Abstractions;
+namespace CollegeControlSystem.Domain.Abstractions;
 
 //    public class Result<T>
 //{

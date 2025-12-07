@@ -1,10 +1,10 @@
-﻿using Bookify.Domain.Abstractions;
+﻿using CollegeControlSystem.Domain.Abstractions;
 
 namespace CollegeControlSystem.Domain.Departments
 {
     public sealed class Program: Entity
     {
-        private Program(Guid id,Name name, int requiredCredits, Guid departmentId):base(id)
+        private Program(Guid id,string name, int requiredCredits, Guid departmentId):base(id)
         {
             Name = name;
             RequiredCredits = requiredCredits;
@@ -15,14 +15,15 @@ namespace CollegeControlSystem.Domain.Departments
         {
         }
 
-        public Name Name { get; private set; }
+        public string Name { get; private set; }
         public int RequiredCredits { get; private set; }
         public Guid DepartmentId { get; private set; }
 
         public Department Department { get; private set; }
 
-        public static Program Create(Guid id,Name name, int requiredCredits, Guid departmentId)
+        public static Program Create(Guid id,string name, int requiredCredits, Guid departmentId)
         {
+            // validate inputs
             return new Program(id,name, requiredCredits, departmentId);
         }
     }

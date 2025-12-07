@@ -1,4 +1,4 @@
-﻿namespace Bookify.Domain.Abstractions;
+﻿namespace CollegeControlSystem.Domain.Abstractions;
 
 public interface IUnitOfWork
 {

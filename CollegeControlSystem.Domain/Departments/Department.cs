@@ -1,4 +1,4 @@
-﻿using Bookify.Domain.Abstractions;
+﻿using CollegeControlSystem.Domain.Abstractions;
 
 namespace CollegeControlSystem.Domain.Departments
 {
@@ -24,6 +24,7 @@ namespace CollegeControlSystem.Domain.Departments
 
         public static Department Create(Guid id, string name, string description)
         {
+            //validate inputs
             return new Department(id, name, description);
         }
 

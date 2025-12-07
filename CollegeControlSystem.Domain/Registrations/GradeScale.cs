@@ -1,4 +1,4 @@
-﻿using Bookify.Domain.Abstractions;
+﻿using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.Registrations;
 
 namespace CollegeControlSystem.Domain.Shared

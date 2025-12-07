@@ -1,4 +1,5 @@
-﻿namespace Bookify.Domain.Abstractions;
+﻿
+namespace CollegeControlSystem.Domain.Abstractions;
 
 public abstract class Entity
 {

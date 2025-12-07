@@ -1,4 +1,4 @@
-﻿using Bookify.Domain.Abstractions;
+﻿using CollegeControlSystem.Domain.Abstractions;
 using System.Text.RegularExpressions;
 
 namespace CollegeControlSystem.Domain.Courses

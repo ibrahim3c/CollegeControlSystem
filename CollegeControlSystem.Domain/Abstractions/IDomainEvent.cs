@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Bookify.Domain.Abstractions;
+namespace CollegeControlSystem.Domain.Abstractions;
 
 public interface IDomainEvent : INotification
 {
