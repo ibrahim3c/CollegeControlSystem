@@ -7,7 +7,7 @@ namespace CollegeControlSystem.Domain.CourseOffering
         // Private constructor for EF Core
         private CourseOffering() { }
 
-        internal CourseOffering(
+        private CourseOffering(
             Guid id,
             Guid courseId,
             Guid instructorId,
@@ -22,7 +22,7 @@ namespace CollegeControlSystem.Domain.CourseOffering
         }
 
         public Guid CourseId { get; private set; }
-        public Guid InstructorId { get; private set; }
+        public Guid InstructorId { get; private set; } // Could link to faculty entity
         public Semester Semester { get; private set; } // Value Object (Fall 2025)
 
         public int Capacity { get; private set; }
@@ -44,6 +44,9 @@ namespace CollegeControlSystem.Domain.CourseOffering
 
             if (instructorId == Guid.Empty)
                 return Result<CourseOffering>.Failure(CourseOfferingErrors.InstructorRequired);
+
+            if (courseId == Guid.Empty)
+                return Result<CourseOffering>.Failure(Error.EmptyId("Course"));
 
             return Result<CourseOffering>.Success(
                 new CourseOffering(Guid.NewGuid(), courseId, instructorId, semester, capacity));
@@ -93,12 +96,14 @@ namespace CollegeControlSystem.Domain.CourseOffering
             return Result.Success();
         }
 
-        public void ChangeInstructor(Guid newInstructorId)
+        public Result ChangeInstructor(Guid newInstructorId)
         {
-            if (newInstructorId != Guid.Empty)
+            if (newInstructorId == Guid.Empty)
             {
-                InstructorId = newInstructorId;
+                return Result.Failure(CourseOfferingErrors.InstructorRequired);
             }
+                InstructorId = newInstructorId;
+            return Result.Success();
         }
     }
 }

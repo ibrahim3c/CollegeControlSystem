@@ -29,7 +29,7 @@ namespace CollegeControlSystem.Domain.Shared
                 return Result<Semester>.Failure(SemsterErrors.InvalidTerm);
 
             if (year < 2020 || year > 2100)
-                return Result<Semester>.Failure((SemsterErrors.InvalidYear);
+                return Result<Semester>.Failure(SemsterErrors.InvalidYear);
 
             return Result<Semester>.Success(new Semester(normalizedTerm, year));
         }

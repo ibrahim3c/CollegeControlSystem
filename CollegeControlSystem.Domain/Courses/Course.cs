@@ -4,7 +4,7 @@ namespace CollegeControlSystem.Domain.Courses
 {
     public sealed class Course:Entity
     {
-        private Course() : base() { }
+        private Course(){ }
 
         private Course(
             Guid id,
@@ -26,7 +26,7 @@ namespace CollegeControlSystem.Domain.Courses
         }
 
         public Guid DepartmentId { get; private set; }
-        public CourseCode Code { get; private set; } // Uses the Value Object
+        public CourseCode Code { get; private set; } 
         public string Title { get; private set; }
         public string? Description { get; private set; }
 
@@ -48,14 +48,18 @@ namespace CollegeControlSystem.Domain.Courses
             int lectureHours,
             int labHours)
         {
-            // 1. Create and Validate Code
+
+            if (departmentId == Guid.Empty)
+                return Result<Course>.Failure(Error.EmptyId("Department"));
+
+            if (lectureHours < 0 || labHours < 0)
+                return Result<Course>.Failure(CourseErrors.InvalidHours);
+
             var codeResult = CourseCode.Create(codeString);
             if (codeResult.IsFailure) return Result<Course>.Failure(codeResult.Error);
 
-            // 2. Validate Credits
             if (credits <= 0) return Result<Course>.Failure(CourseErrors.CreditsInvalid);
 
-            // 3. Create Instance
             var course = new Course(
                 Guid.NewGuid(),
                 departmentId,
@@ -85,13 +89,14 @@ namespace CollegeControlSystem.Domain.Courses
             return Result.Success();
         }
 
-        public void RemovePrerequisite(Guid prerequisiteCourseId)
+        public Result RemovePrerequisite(Guid prerequisiteCourseId)
         {
             var match = Prerequisites.FirstOrDefault(p => p.PrerequisiteCourseId == prerequisiteCourseId);
             if (match != null)
             {
                 Prerequisites.Remove(match);
             }
+            return Result.Success();
         }
     }
 }

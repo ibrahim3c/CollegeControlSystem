@@ -21,10 +21,41 @@ namespace CollegeControlSystem.Domain.Departments
 
         public Department Department { get; private set; }
 
-        public static Program Create(Guid id,string name, int requiredCredits, Guid departmentId)
+        public static Result<Program> Create(string name, int requiredCredits, Guid departmentId)
         {
-            // validate inputs
-            return new Program(id,name, requiredCredits, departmentId);
+            if (string.IsNullOrWhiteSpace(name))
+                return Result<Program>.Failure(DepartmentErrors.NameRequired);
+
+            if (requiredCredits <= 0)
+                return Result<Program>.Failure(DepartmentErrors.InvalidCredits);
+
+            if (departmentId == Guid.Empty)
+                return Result<Program>.Failure(DepartmentErrors.DepartmentRequired);
+
+            var program = new Program(
+                           Guid.NewGuid(),
+                           name,
+                           requiredCredits,
+                           departmentId);
+
+            return Result<Program>.Success(program);
+        }
+
+        public Result UpdateName(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                return Result.Failure(DepartmentErrors.NameRequired);
+            Name = newName;
+            return Result.Success();
+        }
+
+        public Result UpdateCredits(int newCredits)
+        {
+            if (newCredits <= 0)
+                return Result.Failure(DepartmentErrors.InvalidCredits);                
+
+            RequiredCredits = newCredits;
+            return Result.Success();
         }
     }
 }

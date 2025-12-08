@@ -9,5 +9,7 @@ namespace CollegeControlSystem.Domain.Courses
         public static readonly Error CreditsInvalid = new("Course.CreditsInvalid", "Credits must be greater than zero.");
         public static readonly Error PrerequisiteCycle = new("Course.PrerequisiteCycle", "A course cannot be a prerequisite of itself.");
         public static readonly Error PrerequisiteDuplicate = new("Course.PrerequisiteDuplicate", "This prerequisite is already added.");
+        public static readonly Error InvalidHours = new("Course.InvalidHours","Lecture hours and lab hours must be zero or greater.");
+
     }
 }

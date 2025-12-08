@@ -32,7 +32,6 @@ namespace CollegeControlSystem.Domain.Faculties
 
         // Factory Method
         public static Result<Faculty> Create(
-             Guid id,
             string facultyName,
             Guid departmentId,
             string appUserId,
@@ -40,8 +39,6 @@ namespace CollegeControlSystem.Domain.Faculties
             ) 
         {
             // 1. Validation
-            if (id == Guid.Empty)
-                return Result<Faculty>.Failure(Error.EmptyId("Faculty"));
             if (departmentId == Guid.Empty)
                 return Result<Faculty>.Failure(Error.EmptyId("Department"));
             if (String.IsNullOrEmpty(appUserId))
@@ -54,7 +51,7 @@ namespace CollegeControlSystem.Domain.Faculties
             // 2. Create Instance
             return Result<Faculty>.Success(
                 new Faculty(
-                    id,
+                    Guid.NewGuid(),
                     facultyName,
                     departmentId,
                     appUserId,

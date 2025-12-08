@@ -1,6 +1,7 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.Departments;
 using CollegeControlSystem.Domain.Identity;
+using CollegeControlSystem.Domain.Students.Events;
 
 namespace CollegeControlSystem.Domain.Students
 {
@@ -48,7 +49,6 @@ namespace CollegeControlSystem.Domain.Students
 
         // Factory Method
         public static Result<Student> Create(
-            Guid id,
             string studentName,
             string academicNumber,
             Guid programId,
@@ -77,14 +77,11 @@ namespace CollegeControlSystem.Domain.Students
 
             if (programId == Guid.Empty)
                 return Result<Student>.Failure(Error.EmptyId("Program"));
-            if (id == Guid.Empty)
-                return Result<Student>.Failure(Error.EmptyId("Student"));
-
 
 
             // Create the student object
             var student = new Student(
-                id,
+                Guid.NewGuid(),
                 studentName,
                 academicNumber,
                 programId,
@@ -142,7 +139,14 @@ namespace CollegeControlSystem.Domain.Students
             if (ConsecutiveWarnings >= 4)
             {
                 AcademicStatus = AcademicStatus.Dismissed;
-                // Potentially raise Domain Event: StudentDismissed
+                // Potentially raise Domain Event: StudentDismissed so other systems can react (e.g., notify advisor, notify student )
+                RaiseDomainEvent(new StudentDismissedDomainEvent(
+                            StudentId: this.Id,
+                            AcademicNumber: this.AcademicNumber,
+                            Reason: "Exceeded limit of 4 consecutive academic warnings.",
+                            ConsecutiveWarningsCount: this.ConsecutiveWarnings,
+                            OccurredOn: DateTime.UtcNow
+                        ));
             }
         }
 
@@ -166,6 +170,13 @@ namespace CollegeControlSystem.Domain.Students
             if (ConsecutiveWarnings >= 4)
             {
                 AcademicStatus = AcademicStatus.Dismissed;
+                RaiseDomainEvent(new StudentDismissedDomainEvent(
+                    StudentId: this.Id,
+                    AcademicNumber: this.AcademicNumber,
+                    Reason: "Exceeded limit of 4 consecutive academic warnings.",
+                    ConsecutiveWarningsCount: this.ConsecutiveWarnings,
+                    OccurredOn: DateTime.UtcNow
+                ));
             }
         }
 
