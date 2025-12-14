@@ -10,7 +10,7 @@
         // Useful for assigning an advisor to a student
         Task<List<Faculty>> GetAdvisorsAsync(CancellationToken cancellationToken = default);
 
-        void Add(Faculty faculty);
+        Task AddAsync(Faculty faculty);
         void Update(Faculty faculty);
     }
 }

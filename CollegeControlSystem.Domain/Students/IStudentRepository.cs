@@ -13,7 +13,7 @@
         // Used for Control Engine (Batch Processing)
         Task<List<Student>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 
-        void Add(Student student);
+        Task AddAsync(Student student);
         void Update(Student student);
     }
 }
