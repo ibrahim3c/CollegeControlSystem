@@ -54,7 +54,15 @@ namespace CollegeControlSystem.Application.Identity.Register
 
                 case Roles.StudentRole:
                     // add role to user
-                    await userManager.AddToRoleAsync(user, Roles.StudentRole);
+                    //await userManager.AddToRoleAsync(user, Roles.StudentRole);
+                    var roleResult = await userManager.AddToRoleAsync(user, Roles.StudentRole);
+                    if (!roleResult.Succeeded)
+                    {
+                        await userManager.DeleteAsync(user);
+                        return Result<AuthResponse>.Failure(
+                           IdentityErrors.RoleFailed
+                        );
+                    }
                     var studentResult = Student.Create(
                         request.UserName,
                         request.AcademicNumber!,
@@ -63,7 +71,11 @@ namespace CollegeControlSystem.Application.Identity.Register
                         request.NationalId!
                     );
 
-                    if (studentResult.IsFailure) return Result<AuthResponse>.Failure(studentResult.Error);
+                    if (studentResult.IsFailure)
+                    {
+                        await userManager.DeleteAsync(user); // 🔥 rollback
+                        return Result<AuthResponse>.Failure(studentResult.Error);
+                    }
                     await uow.StudentRepository.AddAsync(studentResult?.Value);
                     break;
 
@@ -71,9 +83,29 @@ namespace CollegeControlSystem.Application.Identity.Register
                 case Roles.AdvisorRole:
                     // add role to user
                     if (request.Role == Roles.AdvisorRole)
-                        await userManager.AddToRoleAsync(user, Roles.AdvisorRole);
+                    //await userManager.AddToRoleAsync(user, Roles.AdvisorRole);
+                    {
+                        var res = await userManager.AddToRoleAsync(user, Roles.AdvisorRole);
+                        if (!res.Succeeded)
+                        {
+                            await userManager.DeleteAsync(user);
+                            return Result<AuthResponse>.Failure(
+                               IdentityErrors.RoleFailed
+                            );
+                        }
+                    }
                     else if (request.Role == Roles.InstructorRole)
-                        await userManager.AddToRoleAsync(user, Roles.InstructorRole);
+                    //await userManager.AddToRoleAsync(user, Roles.InstructorRole);
+                    {
+                        var res = await userManager.AddToRoleAsync(user, Roles.InstructorRole);
+                        if (!res.Succeeded)
+                        {
+                            await userManager.DeleteAsync(user);
+                            return Result<AuthResponse>.Failure(
+                               IdentityErrors.RoleFailed
+                            );
+                        }
+                    }
 
 
                     var facultyResult = Faculty.Create(
@@ -83,8 +115,12 @@ namespace CollegeControlSystem.Application.Identity.Register
                             request.Degree!
                         );
 
-                    if (facultyResult.IsFailure) return Result<AuthResponse>.Failure(facultyResult.Error);
+                    if (facultyResult.IsFailure) {
+                        await userManager.DeleteAsync(user); // 🔥 rollback
+                        return Result<AuthResponse>.Failure(facultyResult.Error); 
+                    }
                     await uow.FacultieRepository.AddAsync(facultyResult?.Value);
+
                     break;
 
                 case Roles.AdminRole:
@@ -121,5 +157,6 @@ namespace CollegeControlSystem.Application.Identity.Register
             };
             return Result<AuthResponse>.Success(authResponse);
         }
-    }
-  }
+    
+    } 
+}

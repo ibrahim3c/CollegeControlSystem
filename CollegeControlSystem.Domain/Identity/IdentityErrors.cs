@@ -32,7 +32,7 @@ namespace CollegeControlSystem.Domain.Identity
         public static readonly Error AdminNotAllowed = new(
              "Identity.AdminNotAllowed", "Admins cannot be created via this endpoint.");
 
-
+        public static readonly Error RoleFailed = new("Identity.RoleFailed", "Failed to assign role");
 
 
     }
