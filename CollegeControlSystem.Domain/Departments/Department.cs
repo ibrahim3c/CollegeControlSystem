@@ -8,6 +8,7 @@ namespace CollegeControlSystem.Domain.Departments
         {
             DepartmentName = name;
             Description = description;
+            //IsActive = true;
         }
 
         // for EF
@@ -17,6 +18,7 @@ namespace CollegeControlSystem.Domain.Departments
 
         public string DepartmentName { get; private set; }
         public string? Description { get; private set; }
+        //public bool IsActive { get; private set; }
 
         public List<Program> Programs { get; private set; } = new();
 
@@ -63,5 +65,13 @@ namespace CollegeControlSystem.Domain.Departments
             return Result.Success();
         }
 
+        public Result UpdateDetails(string name, string? description)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return Result<Department>.Failure(DepartmentErrors.NameRequired);
+            DepartmentName = name;
+            Description = description;
+            return Result.Success();
+        }
     }
 }

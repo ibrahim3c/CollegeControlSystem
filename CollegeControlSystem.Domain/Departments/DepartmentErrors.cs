@@ -12,13 +12,20 @@ namespace CollegeControlSystem.Domain.Departments
             "Program.InvalidCredits",
             "Required credits must be greater than zero.");
 
-        public static readonly Error DepartmentRequired = new(
-            "Program.DepartmentRequired",
-            "A program must belong to a department.");
+        //public static readonly Error DepartmentRequired = new(
+        //    "Program.DepartmentRequired",
+        //    "A program must belong to a department.");
 
         public static readonly Error DuplicateProgram = new("Department.DuplicateProgram",
             "A program with this name already exists in the department.");
 
         public static readonly Error ProgramNotFound = new("Department.ProgramNotFound", "Program not found in this department.");
+        public static readonly Error NotFound = new("Department.NotFound", "Department not found.");
+
+        //public static readonly Error NoProgram = new("Department.NoProgram", "Department has no programs.");
+        public static readonly Error HasPrograms = new("Department.HasPrograms", "Cannot delete department because it has associated programs.");
+
+
+
     }
 }

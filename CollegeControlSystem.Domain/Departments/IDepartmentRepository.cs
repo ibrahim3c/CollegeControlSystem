@@ -5,7 +5,7 @@ namespace CollegeControlSystem.Domain.Departments
     {
         Task<Department?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-        // Used to populate dropdowns "Select Department"
+        //include Programs when fetching departments
         Task<List<Department>> GetAllAsync(CancellationToken cancellationToken = default);
 
         // Useful for validation "Does Department CCE exist?"
@@ -13,6 +13,10 @@ namespace CollegeControlSystem.Domain.Departments
 
         void Add(Department department);
         void Update(Department department);
+
+        // populate Program with Department data for UI context
+        Task<List<Program>> GetProgramsWithDepartmentAsync(CancellationToken cancellationToken = default);
+        //Task DeleteAsync(Department department);
         // Delete typically restricted if students are linked
     }
 }
