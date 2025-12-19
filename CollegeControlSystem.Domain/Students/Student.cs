@@ -1,6 +1,7 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.Departments;
 using CollegeControlSystem.Domain.Identity;
+using CollegeControlSystem.Domain.Registrations;
 using CollegeControlSystem.Domain.Students.Events;
 
 namespace CollegeControlSystem.Domain.Students
@@ -34,7 +35,7 @@ namespace CollegeControlSystem.Domain.Students
         public string StudentName { get; private set; }
         public string AcademicNumber { get; private set; }
         public Guid ProgramId { get; private set; }
-        public Program program { get; private set; }
+        public Program Program { get; private set; }
         public Guid? AdvisorId { get; private set; }
         public string NationalId { get; private set; }
 
@@ -44,9 +45,10 @@ namespace CollegeControlSystem.Domain.Students
         public int ConsecutiveWarnings { get; private set; }
 
         public string AppUserId { get; private set; }
-
         public AppUser AppUser { get; private set; }
 
+        // Navigational Property for transcript generation
+        public List<Registration> Registrations { get; private set; } = new List<Registration>();
         // Factory Method
         public static Result<Student> Create(
             string studentName,
@@ -191,10 +193,10 @@ namespace CollegeControlSystem.Domain.Students
 
         private Result UpdateAcademicLevel(int credits)
         {
-            if (program is null)
+            if (Program is null)
                 return Result.Failure(StudentErrors.ProgramRequired);
 
-            int step = program.RequiredCredits / 5;
+            int step = Program.RequiredCredits / 5;
 
             AcademicLevel = credits switch
             {
@@ -208,5 +210,25 @@ namespace CollegeControlSystem.Domain.Students
             return Result.Success();
         }
 
+        public Result UpdatePersonalDetails(string newFullName, string newNationalId)
+        {
+            if (!string.IsNullOrWhiteSpace(newFullName))
+            {
+                StudentName = newFullName;
+            }
+            if (!string.IsNullOrWhiteSpace(newNationalId))
+            {
+                // National ID validation for Egyptian pattern (14 digits)
+                if (newNationalId.Length == 14 && newNationalId.All(char.IsDigit))
+                {
+                    NationalId = newNationalId;
+                }
+                else
+                {
+                    return Result<Student>.Failure(StudentErrors.NationalIdInvalid);
+                }
+            }
+            return Result.Success();
+        }
     }
 }

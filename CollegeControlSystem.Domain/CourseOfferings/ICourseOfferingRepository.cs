@@ -1,6 +1,6 @@
 ﻿using CollegeControlSystem.Domain.Shared;
 
-namespace CollegeControlSystem.Domain.CourseOffering
+namespace CollegeControlSystem.Domain.CourseOfferings
 {
     public interface ICourseOfferingRepository
     {
@@ -15,6 +15,7 @@ namespace CollegeControlSystem.Domain.CourseOffering
 
         void Add(CourseOffering offering);
         void Update(CourseOffering offering);
+        Task<IEnumerable<CourseOffering>> GetByInstructorIdAsync(Guid instructorId, CancellationToken cancellationToken);
         // Delete is usually rarely used; usually we 'Archive' or 'Cancel' via status
     }
 }

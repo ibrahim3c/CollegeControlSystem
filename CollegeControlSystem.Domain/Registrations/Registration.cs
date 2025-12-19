@@ -1,4 +1,5 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
+using CollegeControlSystem.Domain.CourseOfferings;
 
 namespace CollegeControlSystem.Domain.Registrations
 {
@@ -16,12 +17,17 @@ namespace CollegeControlSystem.Domain.Registrations
 
         public Guid StudentId { get; private set; }
         public Guid CourseOfferingId { get; private set; }
+        // nav prop for transcript generation
+        public CourseOffering CourseOffering { get; private set; }
         public RegistrationStatus Status { get; private set; }
 
         // We store this to help the Grading Logic know if it needs to cap points
         public bool IsRetake { get; private set; }
 
         public DateTime RegistrationDate { get; private set; }
+
+        // nav prop for generating transcript
+        public Grade Grade { get; private set; } 
 
         // factory meethod
         public Result<Registration> Create(Guid studentId, Guid courseOfferingId, bool isRetake)

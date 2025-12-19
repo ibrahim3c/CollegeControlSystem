@@ -15,5 +15,8 @@
 
         Task AddAsync(Student student);
         void Update(Student student);
+        Task<Student> GetByIdWithProgramAsync(Guid studentId, CancellationToken cancellationToken);
+        //Fetch Student with deep includes (Registrations -> Offerings -> Course)
+        Task<Student> GetTranscriptDataAsync(Guid studentId, CancellationToken cancellationToken);
     }
 }

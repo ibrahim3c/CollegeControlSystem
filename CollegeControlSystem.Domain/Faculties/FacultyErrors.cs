@@ -15,5 +15,7 @@ namespace CollegeControlSystem.Domain.Faculties
 
         public static readonly Error SameDepartment = new(
             "Faculty.SameDepartment","Faculty is already assigned to this department.");
+        public static readonly Error NotFound = new(
+            "Faculty.NotFound", "Faculty member not found.");
     }
 }

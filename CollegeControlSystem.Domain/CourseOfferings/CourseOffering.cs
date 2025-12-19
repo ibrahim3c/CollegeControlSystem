@@ -1,6 +1,7 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
+using CollegeControlSystem.Domain.Courses;
 using CollegeControlSystem.Domain.Shared;
-namespace CollegeControlSystem.Domain.CourseOffering
+namespace CollegeControlSystem.Domain.CourseOfferings
 {
     public sealed class CourseOffering:Entity
     {
@@ -22,6 +23,7 @@ namespace CollegeControlSystem.Domain.CourseOffering
         }
 
         public Guid CourseId { get; private set; }
+        public Course Course { get; private set; } // Navigation Property for transcript generation
         public Guid InstructorId { get; private set; } // Could link to faculty entity
         public Semester Semester { get; private set; } // Value Object (Fall 2025)
 

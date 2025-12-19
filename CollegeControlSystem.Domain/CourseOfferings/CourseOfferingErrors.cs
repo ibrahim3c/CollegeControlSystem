@@ -1,6 +1,6 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
 
-namespace CollegeControlSystem.Domain.CourseOffering
+namespace CollegeControlSystem.Domain.CourseOfferings
 {
     public static class CourseOfferingErrors
     {

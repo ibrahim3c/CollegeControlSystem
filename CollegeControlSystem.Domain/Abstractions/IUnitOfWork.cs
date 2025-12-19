@@ -1,4 +1,4 @@
-﻿using CollegeControlSystem.Domain.CourseOffering;
+﻿using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Courses;
 using CollegeControlSystem.Domain.Departments;
 using CollegeControlSystem.Domain.Faculties;

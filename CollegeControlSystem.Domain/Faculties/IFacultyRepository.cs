@@ -4,6 +4,7 @@
     {
         Task<Faculty?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
+
         // Useful for "Show me all professors in Computer Engineering"
         Task<List<Faculty>> GetByDepartmentIdAsync(Guid departmentId, CancellationToken cancellationToken = default);
 
@@ -12,5 +13,6 @@
 
         Task AddAsync(Faculty faculty);
         void Update(Faculty faculty);
+        Task<List<Faculty>> GetAllAsync(CancellationToken cancellationToken);
     }
 }

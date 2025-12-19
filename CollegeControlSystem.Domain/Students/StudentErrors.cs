@@ -16,5 +16,11 @@ namespace CollegeControlSystem.Domain.Students
 
         public static readonly Error InvalidAdvisor = new(
             "Student.InvalidAdvisor", "Cannot assign an empty advisor ID.");
+
+        public static readonly Error DuplicateAcademicNumber = new(
+            "Student.DuplicateAcademicNumber", "A student with this Academic Number already exists.");
+        public static readonly Error StudentNotFound = new(
+            "Student.NotFound", "Student not found.");
+
     }
 }
