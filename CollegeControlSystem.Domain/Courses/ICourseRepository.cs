@@ -1,4 +1,5 @@
-﻿namespace CollegeControlSystem.Domain.Courses
+﻿
+namespace CollegeControlSystem.Domain.Courses
 {
     public interface ICourseRepository
     {
@@ -10,5 +11,8 @@
 
         void Add(Course course);
         void Update(Course course);
+        Task<List<Course>> GetByDepartmentAsync(Guid? departmentId, CancellationToken cancellationToken);
+        // Note: Ideally, your Repository's GetByIdWithPrerequisitesAsync should Include(c => c.Prerequisites).ThenInclude(p => p.PrerequisiteCourse)
+        Task<Course?> GetByIdWithPrerequisitesAsync(Guid id, CancellationToken ct = default);
     }
 }

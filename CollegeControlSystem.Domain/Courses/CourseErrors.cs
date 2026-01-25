@@ -10,6 +10,11 @@ namespace CollegeControlSystem.Domain.Courses
         public static readonly Error PrerequisiteCycle = new("Course.PrerequisiteCycle", "A course cannot be a prerequisite of itself.");
         public static readonly Error PrerequisiteDuplicate = new("Course.PrerequisiteDuplicate", "This prerequisite is already added.");
         public static readonly Error InvalidHours = new("Course.InvalidHours","Lecture hours and lab hours must be zero or greater.");
+        public static readonly Error DuplicateCode = new("Course.DuplicateCode", "A course with this code already exists.");
+        public static readonly Error CourseNotFound = new("Course.NotFound", "Target course not found.");
+        public static readonly Error PrerequisiteNotFound = new("Course.PrerequisiteNotFound", "Prerequisite course does not exist.");
+
+
 
     }
 }

@@ -16,6 +16,9 @@ namespace CollegeControlSystem.Domain.Courses
         // Composite Key in DB (PK, FK)
         public Guid PrerequisiteCourseId { get; private set; }
 
+        public Course Course { get; private set; } = null!;
+        public Course PrerequisiteCourse { get; private set; } = null!;
+
         // Factory Method
         public static Result<CoursePrerequisite> Create(Guid courseId, Guid prerequisiteCourseId)
         {
