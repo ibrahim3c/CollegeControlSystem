@@ -19,5 +19,9 @@ namespace CollegeControlSystem.Domain.CourseOfferings
         public static readonly Error CannotReduceCapacity = new(
             "CourseOffering.CapacityConflict",
             "Cannot reduce capacity below the number of currently enrolled students.");
+
+        public static readonly Error OfferingNotFound = new(
+            "CourseOffering.NotFound",
+            "Course offering not found.");
     }
 }
