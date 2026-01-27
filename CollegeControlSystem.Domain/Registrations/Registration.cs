@@ -1,5 +1,6 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.CourseOfferings;
+using CollegeControlSystem.Domain.Registrations.Events;
 
 namespace CollegeControlSystem.Domain.Registrations
 {
@@ -30,7 +31,7 @@ namespace CollegeControlSystem.Domain.Registrations
         public Grade Grade { get; private set; } 
 
         // factory meethod
-        public Result<Registration> Create(Guid studentId, Guid courseOfferingId, bool isRetake)
+        public static Result<Registration> Create(Guid studentId, Guid courseOfferingId, bool isRetake)
         {
             if (studentId == Guid.Empty)
                 return Result<Registration>.Failure(Error.EmptyId("Student"));
@@ -38,8 +39,10 @@ namespace CollegeControlSystem.Domain.Registrations
             if (courseOfferingId == Guid.Empty)
                 return Result<Registration>.Failure(Error.EmptyId("CourseOffering"));
 
-            return Result<Registration>.Success(
-             new Registration(Guid.NewGuid(), studentId, courseOfferingId, isRetake));
+            var registration = new Registration(Guid.NewGuid(), studentId, courseOfferingId, isRetake);
+            //registration.RaiseDomainEvent(new RegistrationCreatedDomainEvent(registration.Id));
+
+            return Result<Registration>.Success(registration);
         }
 
         /// <summary>

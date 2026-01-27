@@ -26,6 +26,16 @@ namespace CollegeControlSystem.Domain.Registrations
 
         public Registration Registration { get; private set; } = null!;
 
+        public bool IsPassing
+        {
+            get
+            {
+                var scaleResult = GradeScale.FromLetter(LetterGrade);
+                // If the letter is valid, return its IsPassing status. Otherwise false.
+                return scaleResult.IsSuccess && scaleResult.Value.IsPassing;
+            }
+        }
+
         // for updating grades and applying retake logic
         public Result CalculateAndSet(decimal semesterWork, decimal finalExam, bool isRetake)
         {
