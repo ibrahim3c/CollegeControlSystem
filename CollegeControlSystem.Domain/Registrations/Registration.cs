@@ -1,6 +1,7 @@
 ﻿using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Registrations.Events;
+using CollegeControlSystem.Domain.Students;
 
 namespace CollegeControlSystem.Domain.Registrations
 {
@@ -17,6 +18,7 @@ namespace CollegeControlSystem.Domain.Registrations
         }
 
         public Guid StudentId { get; private set; }
+        public Student Student { get; private set; } // nav prop for advisor approval
         public Guid CourseOfferingId { get; private set; }
         // nav prop for transcript generation
         public CourseOffering CourseOffering { get; private set; }
