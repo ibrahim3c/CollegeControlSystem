@@ -12,9 +12,9 @@ namespace CollegeControlSystem.Domain.Departments
             "Program.InvalidCredits",
             "Required credits must be greater than zero.");
 
-        //public static readonly Error DepartmentRequired = new(
-        //    "Program.DepartmentRequired",
-        //    "A program must belong to a department.");
+        public static readonly Error DepartmentRequired = new(
+            "Program.DepartmentRequired",
+            "A program must belong to a department.");
 
         public static readonly Error DuplicateProgram = new("Department.DuplicateProgram",
             "A program with this name already exists in the department.");

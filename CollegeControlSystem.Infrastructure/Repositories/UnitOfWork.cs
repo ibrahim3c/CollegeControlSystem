@@ -16,10 +16,10 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         public UnitOfWork(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
-            //StudentRepository = new StudentRepository(_appDbContext);
-            //FacultieRepository = new FacultyRepository(_appDbContext);
-            //DepartmentRepository = new DepartmentRepository(_appDbContext);
-            //CourseOfferingRepository = new CourseOfferingRepository(_appDbContext);
+            StudentRepository = new StudentRepository(_appDbContext);
+            FacultieRepository = new FacultyRepository(_appDbContext);
+            DepartmentRepository = new DepartmentRepository(_appDbContext);
+            CourseOfferingRepository = new CourseOfferingRepository(_appDbContext);
             //CourseRepository = new CourseRepository(_appDbContext);
             //GradeRepository = new GradeRepository(_appDbContext);
             //RegistrationRepository = new RegistrationRepository(_appDbContext);
