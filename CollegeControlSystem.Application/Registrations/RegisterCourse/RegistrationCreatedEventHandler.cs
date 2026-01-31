@@ -1,4 +1,4 @@
-﻿using Bookify.Application.Abstractions.Email;
+﻿using CollegeControlSystem.Application.Abstractions.IService;
 using CollegeControlSystem.Domain.Faculties;
 using CollegeControlSystem.Domain.Registrations;
 using CollegeControlSystem.Domain.Registrations.Events;

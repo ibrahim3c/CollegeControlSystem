@@ -20,9 +20,9 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             FacultieRepository = new FacultyRepository(_appDbContext);
             DepartmentRepository = new DepartmentRepository(_appDbContext);
             CourseOfferingRepository = new CourseOfferingRepository(_appDbContext);
-            //CourseRepository = new CourseRepository(_appDbContext);
-            //GradeRepository = new GradeRepository(_appDbContext);
-            //RegistrationRepository = new RegistrationRepository(_appDbContext);
+            CourseRepository = new CourseRepository(_appDbContext);
+            GradeRepository = new GradeRepository(_appDbContext);
+            RegistrationRepository = new RegistrationRepository(_appDbContext);
         }
 
         public IStudentRepository StudentRepository { get; private set; }

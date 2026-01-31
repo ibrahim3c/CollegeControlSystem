@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Bookify.Application.Abstractions.Email;
+namespace CollegeControlSystem.Application.Abstractions.IService;
 
 public interface IEmailService
 {
