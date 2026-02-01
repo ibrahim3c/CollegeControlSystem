@@ -1,0 +1,6 @@
+services:
+  collegecontrolsystem.presentation:
+    image: ${DOCKER_REGISTRY-}collegecontrolsystempresentation
+    build:
+      context: .
+      dockerfile: CollegeControlSystem.Presentation/Dockerfile
