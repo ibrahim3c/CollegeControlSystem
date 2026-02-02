@@ -1,6 +1,6 @@
 ﻿namespace CollegeControlSystem.Application.Faculties.GetInstructorCourses
 {
-    internal class GetInstructorCoursesQueryResponse
+    public class GetInstructorCoursesQueryResponse
     {
         public Guid InstructorId { get; set; }
         public required IList<InstructorCourseResponse> Courses { get; set; }

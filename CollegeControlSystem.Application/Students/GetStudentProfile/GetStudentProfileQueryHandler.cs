@@ -26,7 +26,7 @@ namespace CollegeControlSystem.Application.Students.GetStudentProfile
                 student.Id,
                 student.StudentName,
                 student.AcademicNumber,
-                student.program.Name,
+                student.Program.Name,
                 student.CGPA,
                 student.AcademicStatus.ToString(),
                 student.AcademicLevel.ToString(),

@@ -44,7 +44,7 @@ namespace CollegeControlSystem.Application.Students.GetTranscript
             return new TranscriptResponse(
                 student.StudentName,
                 student.AcademicNumber,
-                student.program?.Name ?? "N/A",
+                student.Program?.Name ?? "N/A",
                 student.CGPA,
                 semesters
             );
