@@ -5,7 +5,9 @@ using CollegeControlSystem.Application.Departments.GetPrograms;
 using CollegeControlSystem.Application.Departments.UpdateDepartment;
 using CollegeControlSystem.Application.Departments.UpdateProgramCredits;
 using CollegeControlSystem.Domain.Departments;
+using CollegeControlSystem.Infrastructure.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.Departments
@@ -22,6 +24,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateDepartment(
             [FromBody] CreateDepartmentRequest request,
             CancellationToken cancellationToken)
@@ -40,6 +43,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetDepartments(CancellationToken cancellationToken)
         {
             var query = new GetDepartmentsQuery();
@@ -56,6 +60,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateDepartment(
             Guid id,
             [FromBody] UpdateDepartmentRequest request,
@@ -82,6 +87,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         // --- Program Sub-Resources ---
 
         [HttpPost("{departmentId:guid}/programs")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> AddProgram(
             Guid departmentId,
             [FromBody] AddProgramRequest request,
@@ -108,6 +114,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         [HttpGet("programs")]
+        [Authorize]
         public async Task<IActionResult> GetAllPrograms(CancellationToken cancellationToken)
         {
             var query = new GetProgramsQuery();
@@ -123,6 +130,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         [HttpPut("{departmentId:guid}/programs/{programId:guid}/credits")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgramCredits(
             Guid departmentId,
             Guid programId,
@@ -149,7 +157,4 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return NoContent();
         }
     }
-
-
-
 }

@@ -48,7 +48,6 @@ namespace CollegeControlSystem.Infrastructure.Repositories
 
         public async Task<List<Program>> GetProgramsWithDepartmentAsync(CancellationToken cancellationToken = default)
         {
-            // Useful for dropdowns where you need "Program Name (Department Name)"
             return await _context.Set<Program>()
                 .Include(p => p.Department)
                 .OrderBy(p => p.Department.DepartmentName)

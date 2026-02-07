@@ -66,5 +66,6 @@ namespace CollegeControlSystem.Infrastructure.Database
                 throw new ConcurrencyException("A concurrency error occurred while saving changes.", ex);
             }
         }
+    
     }
 }

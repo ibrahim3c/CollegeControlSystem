@@ -1,21 +1,20 @@
 ﻿using CollegeControlSystem.Application.Abstractions.Messaging;
 using CollegeControlSystem.Domain.Abstractions;
-using CollegeControlSystem.Domain.Departments;
 
 namespace CollegeControlSystem.Application.Departments.GetPrograms
 {
     internal sealed class GetProgramsQueryHandler : IQueryHandler<GetProgramsQuery, List<ProgramListResponse>>
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetProgramsQueryHandler(IDepartmentRepository departmentRepository)
+        public GetProgramsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<List<ProgramListResponse>>> Handle(GetProgramsQuery request, CancellationToken cancellationToken)
         {
-            var programs = (await _departmentRepository.GetProgramsWithDepartmentAsync(cancellationToken)).Select(prog => new ProgramListResponse(
+            var programs = (await _unitOfWork.DepartmentRepository.GetProgramsWithDepartmentAsync(cancellationToken)).Select(prog => new ProgramListResponse(
                     prog.Id,
                     prog.Name,
                     prog.Department.DepartmentName,

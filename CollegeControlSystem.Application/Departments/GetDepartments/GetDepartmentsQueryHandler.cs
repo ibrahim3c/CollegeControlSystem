@@ -2,24 +2,22 @@
 
 using CollegeControlSystem.Application.Abstractions.Messaging;
 using CollegeControlSystem.Domain.Abstractions;
-using CollegeControlSystem.Domain.Departments;
-using System.Collections.Generic;
 
 namespace CollegeControlSystem.Application.Departments.GetDepartments
 {
     internal sealed class GetDepartmentsQueryHandler : IQueryHandler<GetDepartmentsQuery, List<DepartmentResponse>>
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetDepartmentsQueryHandler(IDepartmentRepository departmentRepository)
+        public GetDepartmentsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<List<DepartmentResponse>>> Handle(GetDepartmentsQuery request, CancellationToken cancellationToken)
         {
             // include programs when fetching departments
-            var departments = await _departmentRepository.GetAllAsync(cancellationToken);
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync(cancellationToken);
 
             var response = departments.Select(dept => new DepartmentResponse(
                 dept.Id,

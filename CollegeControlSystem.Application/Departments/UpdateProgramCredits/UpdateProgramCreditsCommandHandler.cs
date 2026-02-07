@@ -6,18 +6,16 @@ namespace CollegeControlSystem.Application.Departments.UpdateProgramCredits
 {
     internal sealed class UpdateProgramCreditsCommandHandler : ICommandHandler<UpdateProgramCreditsCommand>
     {
-        private readonly IDepartmentRepository _departmentRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateProgramCreditsCommandHandler(IDepartmentRepository departmentRepository, IUnitOfWork unitOfWork)
+        public UpdateProgramCreditsCommandHandler(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateProgramCreditsCommand request, CancellationToken cancellationToken)
         {
-            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
             if (department is null)
             {
                 return Result.Failure(DepartmentErrors.NotFound);

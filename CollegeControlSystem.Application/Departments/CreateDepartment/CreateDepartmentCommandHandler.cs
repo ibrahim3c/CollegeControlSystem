@@ -6,14 +6,10 @@ namespace CollegeControlSystem.Application.Departments.CreateDepartment
 {
     internal sealed class CreateDepartmentCommandHandler : ICommandHandler<CreateDepartmentCommand, Guid>
     {
-        private readonly IDepartmentRepository _departmentRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public CreateDepartmentCommandHandler(
-            IDepartmentRepository departmentRepository,
             IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -28,7 +24,7 @@ namespace CollegeControlSystem.Application.Departments.CreateDepartment
 
             var department = result.Value;
 
-            _departmentRepository.Add(department);
+            _unitOfWork.DepartmentRepository.Add(department);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<Guid>.Success(department.Id);

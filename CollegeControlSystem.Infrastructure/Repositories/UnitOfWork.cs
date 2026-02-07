@@ -41,7 +41,7 @@ namespace CollegeControlSystem.Infrastructure.Repositories
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await _appDbContext.SaveChangesAsync();
+            return await _appDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using CollegeControlSystem.Domain.Identity;
+﻿using CollegeControlSystem.Domain.Abstractions;
+using CollegeControlSystem.Domain.Departments;
+using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Infrastructure.Database;
 using CollegeControlSystem.Infrastructure.Helpers;
+using CollegeControlSystem.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,12 +42,9 @@ namespace CollegeControlSystem.Infrastructure
             //});
             //#endregion
 
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
-            //services.AddScoped<ITokenGenerator, TokenGenerator>();
-            //services.AddScoped<IImageService, ImageService>();
-            //services.AddScoped<IEmailService, EmailService>();
-            //services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
             #region JWTConfigs
             //(1)
             // identity ===> i spend one day to find out that you are the problem => it should be above JWTConfigs :(

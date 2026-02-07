@@ -6,21 +6,19 @@ namespace CollegeControlSystem.Application.Departments.AddProgram
 {
     internal sealed class AddProgramCommandHandler : ICommandHandler<AddProgramCommand, Guid>
     {
-        private readonly IDepartmentRepository _departmentRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AddProgramCommandHandler(
             IDepartmentRepository departmentRepository,
             IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<Guid>> Handle(AddProgramCommand request, CancellationToken cancellationToken)
         {
             // 1. Load Aggregate Root
-            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
 
             if (department is null)
             {
