@@ -5,7 +5,9 @@ using CollegeControlSystem.Application.Faculties.GetFacultyList;
 using CollegeControlSystem.Application.Faculties.GetInstructorCourses;
 using CollegeControlSystem.Application.Faculties.TransferDepartment;
 using CollegeControlSystem.Application.Faculties.UpdateFacultyInfo;
+using CollegeControlSystem.Domain.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.Faculties
@@ -24,8 +26,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
             /// <summary>
             /// Creates a new faculty member. (Admin usage)
             /// </summary>
-            [HttpPost]
-            public async Task<IActionResult> CreateFaculty([FromBody] CreateFacultyCommand command, CancellationToken cancellationToken)
+        [HttpPost]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> CreateFaculty([FromBody] CreateFacultyCommand command, CancellationToken cancellationToken)
             {
                 var result = await _sender.Send(command, cancellationToken);
 

@@ -22,6 +22,7 @@ namespace CollegeControlSystem.Presentation
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            builder.Configuration.AddJsonFile("Secret.json", optional: false, reloadOnChange: true);
             builder.Services.AddDependencyInjectionService(builder.Configuration);
             builder.Services.AddRateLimiting();
             builder.Services.AddHealthCheck(builder.Configuration);

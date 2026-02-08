@@ -1,8 +1,10 @@
-﻿using CollegeControlSystem.Domain.Abstractions;
+﻿using CollegeControlSystem.Application.Identity;
+using CollegeControlSystem.Domain.Abstractions;
 using CollegeControlSystem.Domain.Departments;
 using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Infrastructure.Database;
 using CollegeControlSystem.Infrastructure.Helpers;
+using CollegeControlSystem.Infrastructure.Integration;
 using CollegeControlSystem.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +20,13 @@ namespace CollegeControlSystem.Infrastructure
     {
         public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
         {
+
+            services.Configure<AdminAccount>(configuration.GetSection("AdminAccount"));
+
+            //services.Configure<ImageKitOptions>(configuration.GetSection("ImageKitOptions"));
+
+            // Configure brevo for email 
+            services.Configure<Brevo>(configuration.GetSection("Brevo"));
 
             services.Configure<AdminAccount>(configuration.GetSection("AdminAccount"));
 
@@ -42,6 +51,7 @@ namespace CollegeControlSystem.Infrastructure
             //});
             //#endregion
 
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 

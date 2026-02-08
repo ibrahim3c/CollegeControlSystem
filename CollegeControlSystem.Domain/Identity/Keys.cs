@@ -1,6 +1,4 @@
-﻿
-
-namespace CollegeControlSystem.Infrastructure.Helpers
+﻿namespace CollegeControlSystem.Domain.Identity
 {
     public class Keys
     {

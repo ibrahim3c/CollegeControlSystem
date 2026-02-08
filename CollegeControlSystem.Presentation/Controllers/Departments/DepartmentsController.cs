@@ -5,7 +5,7 @@ using CollegeControlSystem.Application.Departments.GetPrograms;
 using CollegeControlSystem.Application.Departments.UpdateDepartment;
 using CollegeControlSystem.Application.Departments.UpdateProgramCredits;
 using CollegeControlSystem.Domain.Departments;
-using CollegeControlSystem.Infrastructure.Helpers;
+using CollegeControlSystem.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

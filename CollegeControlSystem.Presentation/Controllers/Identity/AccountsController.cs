@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Application.Identity.Login;
-using CollegeControlSystem.Application.Identity.Register;
 using CollegeControlSystem.Application.Identity.RefreshToken;
 using CollegeControlSystem.Application.Identity.RevokeToken;
 using CollegeControlSystem.Application.Identity.ForgetPassword;
 using CollegeControlSystem.Application.Identity.ResetPassword;
 using CollegeControlSystem.Application.Identity.LockUnLock;
+using CollegeControlSystem.Application.Identity.GetCurrentUser;
 
 namespace CollegeControlSystem.Presentation.Controllers.Identity
 {
@@ -21,6 +21,15 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
         public AccountsController(ISender sender)
         {
             _sender = sender;
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var query = new GetCurrentUserQuery(User);
+            var result = await _sender.Send(query);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
         [HttpPost("login")]
@@ -38,37 +47,37 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return Ok(result.Value);
         }
 
-        [HttpPost("register")]
-        [Authorize(Roles = "Admin")] // Strict RBAC: Only Admins can create new users in a college system
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
-        {
-            var command = new RegisterCommand(
-                request.UserName,
-                request.Email,
-                request.Password,
-                request.PhoneNumber,
-                request.Role,
-                request.AcademicNumber,
-                request.NationalId,
-                request.ProgramId,
-                request.DepartmentId,
-                request.Degree
-                );
+        //[HttpPost("register")]
+        //[Authorize(Roles = "Admin")] // Strict RBAC: Only Admins can create new users in a college system
+        //public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
+        //{
+        //    var command = new RegisterCommand(
+        //        request.UserName,
+        //        request.Email,
+        //        request.Password,
+        //        request.PhoneNumber,
+        //        request.Role,
+        //        request.AcademicNumber,
+        //        request.NationalId,
+        //        request.ProgramId,
+        //        request.DepartmentId,
+        //        request.Degree
+        //        );
 
-            var result = await _sender.Send(command, cancellationToken);
+        //    var result = await _sender.Send(command, cancellationToken);
 
-            if (result.IsFailure)
-            {
-                if (result.Error == IdentityErrors.UserAlreadyExists)
-                {
-                    return Conflict(result.Error); // 409 Conflict
-                }
-                return BadRequest(result.Error);
-            }
+        //    if (result.IsFailure)
+        //    {
+        //        if (result.Error == IdentityErrors.UserAlreadyExists)
+        //        {
+        //            return Conflict(result.Error); // 409 Conflict
+        //        }
+        //        return BadRequest(result.Error);
+        //    }
 
-            // Return 200 OK with Auth Response (Token) so the admin/user can use it immediately if needed
-            return Ok(result.Value);
-        }
+        //    // Return 200 OK with Auth Response (Token) so the admin/user can use it immediately if needed
+        //    return Ok(result.Value);
+        //}
 
         [HttpPost("refresh-token")]
         [AllowAnonymous] // Needs to be anonymous because the Access Token might already be expired
@@ -86,6 +95,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
         }
 
         [HttpPost("revoke-token")]
+        [Authorize]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest request, CancellationToken cancellationToken)
         {
             // Revoking token (Log out)
@@ -133,7 +143,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
         }
 
         [HttpPut("lock-unlock/{userId:int}")] // Assuming UserID is int based on TPT Schema
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> LockUnlockUser(LockUnlockRequest request, CancellationToken cancellationToken)
         {
             var command = new LockUnLockCommand(request.UserId);

@@ -3,7 +3,9 @@ using CollegeControlSystem.Application.Students.CreateStudent;
 using CollegeControlSystem.Application.Students.GetStudentProfile;
 using CollegeControlSystem.Application.Students.GetTranscript;
 using CollegeControlSystem.Application.Students.UpdateStudentProfile;
+using CollegeControlSystem.Domain.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.Students
@@ -20,6 +22,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
         }
 
         [HttpPost]
+        [Authorize(Roles=Roles.AdminRole)]
         public async Task<IActionResult> CreateStudent([FromBody] CreateStudentCommand command, CancellationToken cancellationToken)
         {
             var result = await _sender.Send(command, cancellationToken);

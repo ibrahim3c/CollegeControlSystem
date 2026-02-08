@@ -3,9 +3,14 @@
 namespace CollegeControlSystem.Application.Faculties.CreateFaculty
 {
     public sealed record CreateFacultyCommand(
-        string FullName,
-        Guid DepartmentId,
-        string AppUserId, // Link to existing Identity User
-        string Degree
+    string UserName,
+    string Email,
+    string Password,
+    string? PhoneNumber,
+    string FullName,
+    Guid DepartmentId,
+    string Degree,
+    bool IsAdvisor
     ) : ICommand<Guid>;
+
 }
