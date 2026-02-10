@@ -6,11 +6,11 @@ namespace CollegeControlSystem.Application.Faculties.GetFacultyList
 {
     internal sealed class GetFacultyListQueryHandler : IQueryHandler<GetFacultyListQuery, List<GetFacultyListQueryResponse>>
     {
-        private readonly IFacultyRepository _facultyRepository;
+        private readonly IUnitOfWork _uow;
 
-        public GetFacultyListQueryHandler(IFacultyRepository facultyRepository)
+        public GetFacultyListQueryHandler(IUnitOfWork uow)
         {
-            _facultyRepository = facultyRepository;
+            _uow = uow;
         }
 
         public async Task<Result<List<GetFacultyListQueryResponse>>> Handle(GetFacultyListQuery request, CancellationToken cancellationToken)
@@ -20,11 +20,11 @@ namespace CollegeControlSystem.Application.Faculties.GetFacultyList
 
             if (request.DepartmentId.HasValue)
             {
-                facultyMembers = await _facultyRepository.GetByDepartmentIdAsync(request.DepartmentId.Value, cancellationToken);
+                facultyMembers = await _uow.FacultieRepository.GetByDepartmentIdAsync(request.DepartmentId.Value, cancellationToken);
             }
             else
             {
-                facultyMembers = await _facultyRepository.GetAllAsync(cancellationToken);
+                facultyMembers = await _uow.FacultieRepository.GetAllAsync(cancellationToken);
             }
 
             var response = facultyMembers.Select(f => new GetFacultyListQueryResponse(

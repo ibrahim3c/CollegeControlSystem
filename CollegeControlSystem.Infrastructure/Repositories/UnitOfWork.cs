@@ -17,7 +17,7 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         {
             _appDbContext = appDbContext;
             StudentRepository = new StudentRepository(_appDbContext);
-            FacultieRepository = new FacultyRepository(_appDbContext);
+            FacultyRepository = new FacultyRepository(_appDbContext);
             DepartmentRepository = new DepartmentRepository(_appDbContext);
             CourseOfferingRepository = new CourseOfferingRepository(_appDbContext);
             CourseRepository = new CourseRepository(_appDbContext);
@@ -27,7 +27,7 @@ namespace CollegeControlSystem.Infrastructure.Repositories
 
         public IStudentRepository StudentRepository { get; private set; }
 
-        public IFacultyRepository FacultieRepository { get; private set; }
+        public IFacultyRepository FacultyRepository { get; private set; }
 
         public IDepartmentRepository DepartmentRepository { get; private set; }
 

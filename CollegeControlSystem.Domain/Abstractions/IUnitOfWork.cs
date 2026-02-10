@@ -10,7 +10,7 @@ namespace CollegeControlSystem.Domain.Abstractions;
 public interface IUnitOfWork
 {
     IStudentRepository StudentRepository { get; }
-    IFacultyRepository FacultieRepository { get; }
+    IFacultyRepository FacultyRepository { get; }
     IDepartmentRepository DepartmentRepository { get; }
     ICourseOfferingRepository CourseOfferingRepository{ get; }
     ICourseRepository CourseRepository{ get; }

@@ -5,16 +5,16 @@ namespace CollegeControlSystem.Application.Faculties.GetAdvisorStudents
 {
     internal sealed class GetAdvisorStudentsQueryHandler : IQueryHandler<GetAdvisorStudentsQuery, GetAdvisorStudentsQueryResponse>
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUnitOfWork _uow;
 
-        public GetAdvisorStudentsQueryHandler(IStudentRepository studentRepository)
+        public GetAdvisorStudentsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _studentRepository = studentRepository;
+            _uow = unitOfWork;
         }
 
         public async Task<Result<GetAdvisorStudentsQueryResponse>> Handle(GetAdvisorStudentsQuery request, CancellationToken cancellationToken)
         {
-            var students = await _studentRepository.GetByAdvisorIdAsync(request.AdvisorId, cancellationToken);
+            var students = await _uow.StudentRepository.GetByAdvisorIdAsync(request.AdvisorId, cancellationToken);
 
             var advisorStudents = students.Select(s => new AdvisorStudentResponse(
                 s.Id,

@@ -5,18 +5,16 @@ namespace CollegeControlSystem.Application.Faculties.UpdateFacultyInfo
 {
     internal sealed class UpdateFacultyInfoCommandHandler : ICommandHandler<UpdateFacultyInfoCommand>
     {
-        private readonly IFacultyRepository _facultyRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateFacultyInfoCommandHandler(IFacultyRepository facultyRepository, IUnitOfWork unitOfWork)
+        public UpdateFacultyInfoCommandHandler(IUnitOfWork unitOfWork)
         {
-            _facultyRepository = facultyRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateFacultyInfoCommand request, CancellationToken cancellationToken)
         {
-            var faculty = await _facultyRepository.GetByIdAsync(request.FacultyId, cancellationToken);
+            var faculty = await _unitOfWork.FacultyRepository.GetByIdAsync(request.FacultyId, cancellationToken);
 
             if (faculty is null)
             {
@@ -28,7 +26,7 @@ namespace CollegeControlSystem.Application.Faculties.UpdateFacultyInfo
 
             if (result.IsFailure) return result;
 
-            _facultyRepository.Update(faculty);
+            //_unitOfWork.FacultyRepository.Update(faculty);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

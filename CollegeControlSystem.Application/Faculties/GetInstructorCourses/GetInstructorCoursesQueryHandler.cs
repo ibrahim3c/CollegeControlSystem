@@ -6,16 +6,17 @@ namespace CollegeControlSystem.Application.Faculties.GetInstructorCourses
 {
     internal sealed class GetInstructorCoursesQueryHandler : IQueryHandler<GetInstructorCoursesQuery, GetInstructorCoursesQueryResponse>
     {
-        private readonly ICourseOfferingRepository _offeringRepository;
+        private readonly IUnitOfWork _uow;
 
-        public GetInstructorCoursesQueryHandler(ICourseOfferingRepository offeringRepository)
+
+        public GetInstructorCoursesQueryHandler(IUnitOfWork uow)
         {
-            _offeringRepository = offeringRepository;
+            _uow = uow;
         }
 
         public async Task<Result<GetInstructorCoursesQueryResponse>> Handle(GetInstructorCoursesQuery request, CancellationToken cancellationToken)
         {
-            var offerings = await _offeringRepository.GetByInstructorIdAsync(request.InstructorId, cancellationToken);
+            var offerings = await _uow.CourseOfferingRepository.GetByInstructorIdAsync(request.InstructorId, cancellationToken);
 
 
             var courses = offerings.Select(o => new InstructorCourseResponse(

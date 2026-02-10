@@ -9,7 +9,7 @@ namespace CollegeControlSystem.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Faculty> builder)
         {
             // 1. Table Name
-            builder.ToTable("Faculty");
+            builder.ToTable("Faculties");
 
             // 2. Primary Key
             builder.HasKey(f => f.Id);

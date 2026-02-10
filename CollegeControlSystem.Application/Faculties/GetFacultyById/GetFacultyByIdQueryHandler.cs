@@ -6,16 +6,16 @@ namespace CollegeControlSystem.Application.Faculties.GetFacultyById
 {
     internal sealed class GetFacultyByIdQueryHandler : IQueryHandler<GetFacultyByIdQuery, GetFacultyByIdQueryResponse>
     {
-        private readonly IFacultyRepository _facultyRepository;
+        private readonly IUnitOfWork _uow;
 
-        public GetFacultyByIdQueryHandler(IFacultyRepository facultyRepository)
+        public GetFacultyByIdQueryHandler( IUnitOfWork uow)
         {
-            _facultyRepository = facultyRepository;
+            _uow = uow;
         }
 
         public async Task<Result<GetFacultyByIdQueryResponse>> Handle(GetFacultyByIdQuery request, CancellationToken cancellationToken)
         {
-            var faculty = await _facultyRepository.GetByIdAsync(request.Id, cancellationToken);
+            var faculty = await _uow.FacultieRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (faculty is null)
             {
