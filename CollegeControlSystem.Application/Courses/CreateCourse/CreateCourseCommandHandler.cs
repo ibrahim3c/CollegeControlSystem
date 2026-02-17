@@ -5,19 +5,17 @@ namespace CollegeControlSystem.Application.Courses.CreateCourse
 {
     internal sealed class CreateCourseCommandHandler : ICommandHandler<CreateCourseCommand, Guid>
     {
-        private readonly ICourseRepository _courseRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateCourseCommandHandler(ICourseRepository courseRepository, IUnitOfWork unitOfWork)
+        public CreateCourseCommandHandler(IUnitOfWork unitOfWork)
         {
-            _courseRepository = courseRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<Guid>> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
         {
             // 1. Check Uniqueness
-            if (!await _courseRepository.IsCodeUniqueAsync(request.Code, cancellationToken))
+            if (!await _unitOfWork.CourseRepository.IsCodeUniqueAsync(request.Code, cancellationToken))
             {
                 return Result<Guid>.Failure(CourseErrors.DuplicateCode);
             }
@@ -41,7 +39,7 @@ namespace CollegeControlSystem.Application.Courses.CreateCourse
             var course = result.Value;
 
             // 3. Persist
-            _courseRepository.Add(course);
+            _unitOfWork.CourseRepository.Add(course);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<Guid>.Success(course.Id);

@@ -44,8 +44,7 @@ namespace CollegeControlSystem.Domain.Courses
                 new CourseCode(finalValue, dept, level));
         }
 
-        public override string ToString() => Value;
-// so u can do Course.Code or Course.code.toString() it will retucrn the Value
+        public override string ToString() => Value; // so u can do Course.Code or Course.code.toString() it will retucrn the Value
     }
 }
 

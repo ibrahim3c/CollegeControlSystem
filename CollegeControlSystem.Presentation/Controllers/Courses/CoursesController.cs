@@ -4,7 +4,9 @@ using CollegeControlSystem.Application.Courses.GetCourseDetails;
 using CollegeControlSystem.Application.Courses.GetCourseList;
 using CollegeControlSystem.Application.Courses.RemovePrerequisite;
 using CollegeControlSystem.Domain.Courses;
+using CollegeControlSystem.Domain.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.Courses
@@ -21,6 +23,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateCourse(
             [FromBody] CreateCourseRequest request,
             CancellationToken cancellationToken)
@@ -52,6 +55,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetCourseList(
             [FromQuery] Guid? departmentId,
             CancellationToken cancellationToken)
@@ -69,6 +73,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> GetCourseDetails(
             Guid id,
             CancellationToken cancellationToken)
@@ -93,6 +98,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
         // --- Prerequisite Sub-Resources ---
 
         [HttpPost("{id:guid}/prerequisites")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> AddPrerequisite(
             Guid id,
             [FromBody] AddPrerequisiteRequest request,
@@ -119,6 +125,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
         }
 
         [HttpDelete("{id:guid}/prerequisites/{prerequisiteId:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> RemovePrerequisite(
             Guid id,
             Guid prerequisiteId,

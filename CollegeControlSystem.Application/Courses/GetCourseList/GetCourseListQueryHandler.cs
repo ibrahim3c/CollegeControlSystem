@@ -6,18 +6,16 @@ namespace CollegeControlSystem.Application.Courses.GetCourseList
 
     internal sealed class GetCourseListQueryHandler : IQueryHandler<GetCourseListQuery, List<GetCourseListQueryResponse>>
     {
-        private readonly ICourseRepository _courseRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetCourseListQueryHandler(ICourseRepository courseRepository)
+        public GetCourseListQueryHandler(IUnitOfWork unitOfWork)
         {
-            _courseRepository = courseRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<List<GetCourseListQueryResponse>>> Handle(GetCourseListQuery request, CancellationToken cancellationToken)
         {
-            // Requires extending ICourseRepository with GetAllAsync or GetByDepartmentAsync
-            // Assuming GetByDepartmentAsync(Guid? deptId) exists in Repo for this example
-            var courses = await _courseRepository.GetByDepartmentAsync(request.DepartmentId, cancellationToken);
+            var courses = await _unitOfWork.CourseRepository.GetByDepartmentAsync(request.DepartmentId, cancellationToken);
 
             var response = courses.Select(c => new GetCourseListQueryResponse(
                 c.Id,
