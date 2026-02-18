@@ -6,18 +6,16 @@ namespace CollegeControlSystem.Application.CourseOfferings.ChangeInstructor
 {
     internal sealed class ChangeInstructorCommandHandler : ICommandHandler<ChangeInstructorCommand>
     {
-        private readonly ICourseOfferingRepository _offeringRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ChangeInstructorCommandHandler(ICourseOfferingRepository offeringRepository, IUnitOfWork unitOfWork)
+        public ChangeInstructorCommandHandler(IUnitOfWork unitOfWork)
         {
-            _offeringRepository = offeringRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(ChangeInstructorCommand request, CancellationToken cancellationToken)
         {
-            var offering = await _offeringRepository.GetByIdAsync(request.OfferingId, cancellationToken);
+            var offering = await _unitOfWork.CourseOfferingRepository.GetByIdAsync(request.OfferingId, cancellationToken);
 
             if (offering is null) return Result.Failure(CourseOfferingErrors.OfferingNotFound);
 

@@ -64,5 +64,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         {
             _context.Set<CourseOffering>().Update(offering);
         }
+
+        public Task<CourseOffering> GetByCourseIdAsync(Guid courseId, Semester semester, Guid instructorId, CancellationToken cancellationToken = default)
+        {
+            return _context.Set<CourseOffering>()
+                .FirstOrDefaultAsync(co => co.CourseId == courseId && co.Semester.Year == semester.Year && co.Semester.Term == semester.Term && co.InstructorId == instructorId, cancellationToken);
+        }
     }
 }

@@ -3,7 +3,9 @@ using CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings;
 using CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacity;
 using CollegeControlSystem.Domain.CourseOfferings;
+using CollegeControlSystem.Domain.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
@@ -20,6 +22,7 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateCourseOffering(
             [FromBody] CreateCourseOfferingRequest request,
             CancellationToken cancellationToken)
@@ -44,6 +47,7 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAvailableOfferings(
             [FromQuery] string term,
             [FromQuery] int year,
@@ -63,6 +67,7 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
         }
 
         [HttpPut("{id:guid}/capacity")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateCapacity(
             Guid id,
             [FromBody] UpdateCapacityRequest request,
@@ -86,6 +91,7 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
         }
 
         [HttpPut("{id:guid}/instructor")]
+        [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> ChangeInstructor(
             Guid id,
             [FromBody] ChangeInstructorRequest request,

@@ -7,12 +7,10 @@ namespace CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering
 {
     internal sealed class CreateCourseOfferingCommandHandler : ICommandHandler<CreateCourseOfferingCommand, Guid>
     {
-        private readonly ICourseOfferingRepository _offeringRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateCourseOfferingCommandHandler(ICourseOfferingRepository offeringRepository, IUnitOfWork unitOfWork)
+        public CreateCourseOfferingCommandHandler(IUnitOfWork unitOfWork)
         {
-            _offeringRepository = offeringRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -28,6 +26,10 @@ namespace CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering
 
             // 2. Check for Duplicates (Optional but recommended)
             // Ideally, check if this Course + Semester + Instructor combination already exists to prevent double booking.
+           var courseOffering= await _unitOfWork.CourseOfferingRepository.GetByCourseIdAsync(request.CourseId, cancellationToken);
+            if(courseOffering != null) {
+                return Result<Guid>.Failure(CourseOfferingErrors.DuplicateOffering);
+            }
 
             // 3. Create Domain Entity
             var result = CourseOffering.Create(
@@ -43,7 +45,7 @@ namespace CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering
             }
 
             // 4. Persist
-            _offeringRepository.Add(result.Value);
+            _unitOfWork.CourseOfferingRepository.Add(result.Value);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<Guid>.Success(result.Value.Id);

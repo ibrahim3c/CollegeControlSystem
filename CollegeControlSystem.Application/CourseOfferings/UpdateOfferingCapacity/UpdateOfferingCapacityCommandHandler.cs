@@ -6,18 +6,16 @@ namespace CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacit
 {
     internal sealed class UpdateOfferingCapacityCommandHandler : ICommandHandler<UpdateOfferingCapacityCommand>
     {
-        private readonly ICourseOfferingRepository _offeringRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateOfferingCapacityCommandHandler(ICourseOfferingRepository offeringRepository, IUnitOfWork unitOfWork)
+        public UpdateOfferingCapacityCommandHandler(IUnitOfWork unitOfWork)
         {
-            _offeringRepository = offeringRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateOfferingCapacityCommand request, CancellationToken cancellationToken)
         {
-            var offering = await _offeringRepository.GetByIdAsync(request.OfferingId, cancellationToken);
+            var offering = await _unitOfWork.CourseOfferingRepository.GetByIdAsync(request.OfferingId, cancellationToken);
 
             if (offering is null)
             {

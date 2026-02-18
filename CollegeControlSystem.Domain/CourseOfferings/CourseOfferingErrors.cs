@@ -23,5 +23,9 @@ namespace CollegeControlSystem.Domain.CourseOfferings
         public static readonly Error OfferingNotFound = new(
             "CourseOffering.NotFound",
             "Course offering not found.");
+
+        public static readonly Error DuplicateOffering = new(
+            "CourseOffering.Duplicate",
+            "This course is already offered by the same instructor in the same semester.");
     }
 }

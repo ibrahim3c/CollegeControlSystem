@@ -1,22 +1,16 @@
 ﻿using CollegeControlSystem.Application.Abstractions.Messaging;
 using CollegeControlSystem.Domain.Abstractions;
-using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings
 {
     internal sealed class GetAvailableOfferingsQueryHandler : IQueryHandler<GetAvailableOfferingsQuery, List<OfferingQueryResponse>>
     {
-        private readonly ICourseOfferingRepository _offeringRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public GetAvailableOfferingsQueryHandler(ICourseOfferingRepository offeringRepository)
+        public GetAvailableOfferingsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _offeringRepository = offeringRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<Result<List<OfferingQueryResponse>>> Handle(GetAvailableOfferingsQuery request, CancellationToken cancellationToken)
@@ -30,7 +24,7 @@ namespace CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings
             var semester = semesterResult.Value;
 
             // 2. Fetch from Repo (Must Include Course & Instructor)
-            var offerings = await _offeringRepository.GetBySemesterAsync(semester, cancellationToken);
+            var offerings = await unitOfWork.CourseOfferingRepository.GetBySemesterAsync(semester, cancellationToken);
 
             // 3. Map to DTO
             // Note: Instructor Name logic depends on how you load Faculty/User info.
