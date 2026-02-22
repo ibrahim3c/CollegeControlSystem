@@ -4,9 +4,11 @@ using CollegeControlSystem.Application.Registrations.GetPendingRegistrations;
 using CollegeControlSystem.Application.Registrations.GetStudentSchedule;
 using CollegeControlSystem.Application.Registrations.RegisterCourse;
 using CollegeControlSystem.Domain.CourseOfferings;
+using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Domain.Registrations;
 using CollegeControlSystem.Domain.Students;  
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeControlSystem.Presentation.Controllers.Registratoins
@@ -23,6 +25,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> RegisterCourse(
             [FromBody] RegisterCourseRequest request,
             CancellationToken cancellationToken)
@@ -60,6 +63,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
         }
 
         [HttpPut("{id:guid}/approve")]
+        [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> ApproveRegistration(
             Guid id,
             [FromBody] ApproveRegistrationRequest request,
@@ -89,6 +93,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
         }
 
         [HttpPut("{id:guid}/drop")]
+        [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> DropCourse(
             Guid id,
             [FromBody] DropCourseRequest request,
@@ -118,6 +123,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
         }
 
         [HttpGet("pending")]
+        [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetPendingRegistrations(
             [FromQuery] Guid advisorId,
             CancellationToken cancellationToken)
@@ -135,6 +141,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
         }
 
         [HttpGet("schedule/{studentId:guid}")]
+        [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> GetStudentSchedule(
             Guid studentId,
             [FromQuery] string? term,
