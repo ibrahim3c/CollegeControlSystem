@@ -17,8 +17,10 @@ namespace CollegeControlSystem.Domain.CourseOfferings
         void Update(CourseOffering offering);
         Task<IEnumerable<CourseOffering>> GetByInstructorIdAsync(Guid instructorId, CancellationToken cancellationToken);
         // Delete is usually rarely used; usually we 'Archive' or 'Cancel' via status
-
-        // check for duplicates (same course, same semester, same instructor) - optional but recommended to prevent double booking. This could be a method like:
-        Task<CourseOffering> GetByCourseIdAsync(Guid courseId, Semester semester, Guid instructorId, CancellationToken cancellationToken = default);
+        Task<List<CourseOffering>> GetAvailableOfferingsAsync(
+            Semester? semester,
+            Guid? courseId,
+            Guid? instructorId,
+            CancellationToken cancellationToken = default);
     }
 }

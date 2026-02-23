@@ -1,8 +1,10 @@
 ﻿using CollegeControlSystem.Application.Registrations.ApproveRegistration;
 using CollegeControlSystem.Application.Registrations.DropCourse;
+using CollegeControlSystem.Application.Registrations.GetAvailableCourses;
 using CollegeControlSystem.Application.Registrations.GetPendingRegistrations;
 using CollegeControlSystem.Application.Registrations.GetStudentSchedule;
 using CollegeControlSystem.Application.Registrations.RegisterCourse;
+using CollegeControlSystem.Application.Registrations.SubmitGrades;
 using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Domain.Registrations;
@@ -10,6 +12,7 @@ using CollegeControlSystem.Domain.Students;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CollegeControlSystem.Presentation.Controllers.Registratoins
 {
@@ -164,6 +167,69 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
 
             return Ok(result.Value);
         }
-    }
 
+        /// <summary>
+        /// Shows students the available courses they can register for in the specified semester.
+        /// </summary>
+        [HttpGet("available")]
+        [Authorize(Roles = Roles.StudentRole)] // Only Students access their registration board
+        public async Task<IActionResult> GetAvailableCoursesForRegistration(
+            [FromQuery] Guid studentId,
+            [FromQuery] string term,
+            [FromQuery] int year,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetAvailableCoursesQuery(studentId, term, year);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == StudentErrors.StudentNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                // E.g., Invalid Semester Term provided
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        /// <summary>
+        /// Submits semester work and final exam grades for students.
+        /// Automatically calculates total points, letter grades, and applies retake caps.
+        /// </summary>
+        [HttpPost("submit")]
+        [Authorize(Roles = Roles.ProfessorRole + "," + Roles.AdminRole)] // Instructors submit grades
+        public async Task<IActionResult> SubmitGrades(
+            [FromBody] SubmitGradesRequest request,
+            CancellationToken cancellationToken)
+        {
+            // Security Best Practice: Extract the Instructor ID from the JWT Claims
+            // ClaimTypes.NameIdentifier usually stores the User ID when generating the token
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(userIdClaim, out Guid instructorId))
+            {
+                return Unauthorized(new { Error = "Invalid user token." });
+            }
+
+            var command = new SubmitGradesCommand(
+                request.OfferingId,
+                instructorId,
+                request.Submissions);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                // E.g., Returns 400 if scores exceed 100 or are negative
+                return BadRequest(result.Error);
+            }
+
+            return Ok(new { Message = "Grades successfully submitted and applied." });
+        }
+    }
 }

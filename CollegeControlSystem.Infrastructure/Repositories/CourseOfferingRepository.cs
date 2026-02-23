@@ -65,10 +65,40 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<CourseOffering>().Update(offering);
         }
 
-        public Task<CourseOffering> GetByCourseIdAsync(Guid courseId, Semester semester, Guid instructorId, CancellationToken cancellationToken = default)
+        public async Task<List<CourseOffering>> GetAvailableOfferingsAsync(
+            Semester? semester,
+            Guid? courseId,
+            Guid? instructorId,
+            CancellationToken cancellationToken = default)
         {
-            return _context.Set<CourseOffering>()
-                .FirstOrDefaultAsync(co => co.CourseId == courseId && co.Semester.Year == semester.Year && co.Semester.Term == semester.Term && co.InstructorId == instructorId, cancellationToken);
+            // 1. Start with an IQueryable so we don't execute the query against the DB yet
+            var query = _context.Set<CourseOffering>()
+                .Include(co => co.Course)
+                .Include(co => co.Instructor)
+                .AsQueryable();
+
+            // 2. Conditionally append WHERE clauses based on provided parameters
+            if (semester is not null)
+            {
+                query = query.Where(co => co.Semester.Year == semester.Year && co.Semester.Term == semester.Term);
+            }
+
+            if (courseId.HasValue)
+            {
+                query = query.Where(co => co.CourseId == courseId.Value);
+            }
+
+            if (instructorId.HasValue)
+            {
+                query = query.Where(co => co.InstructorId == instructorId.Value);
+            }
+
+            // 3. Apply standard sorting and execute the query
+            return await query
+                .OrderByDescending(co => co.Semester.Year)
+                .ThenByDescending(co => co.Semester.Term)
+                .ThenBy(co => co.Course.Title)
+                .ToListAsync(cancellationToken);
         }
     }
 }

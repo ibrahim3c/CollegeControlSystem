@@ -89,5 +89,12 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         {
             _context.Set<Registration>().Update(registration);
         }
+
+        public Task<List<Registration>> GetByOfferingIdAsync(Guid courseOfferingId, CancellationToken cancellationToken = default)
+        {
+            return _context.Set<Registration>()
+                .Where(r => r.CourseOfferingId == courseOfferingId)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

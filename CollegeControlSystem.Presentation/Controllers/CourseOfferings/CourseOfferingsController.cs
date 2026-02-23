@@ -1,12 +1,16 @@
 ﻿using CollegeControlSystem.Application.CourseOfferings.ChangeInstructor;
 using CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings;
+using CollegeControlSystem.Application.CourseOfferings.GetRoster;
 using CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacity;
+using CollegeControlSystem.Application.Registrations.ExportGrades;
 using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Identity;
+using CollegeControlSystem.Domain.Registrations;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
 {
@@ -49,11 +53,14 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAvailableOfferings(
-            [FromQuery] string term,
-            [FromQuery] int year,
+            [FromQuery] string? term,
+            [FromQuery] int? year,
+            [FromQuery] Guid? courseId,
+            [FromQuery] Guid? instructorId,
             CancellationToken cancellationToken)
         {
-            var query = new GetAvailableOfferingsQuery(term, year);
+            // The query object now accepts the optional filters
+            var query = new GetAvailableOfferingsQuery(term, year, courseId, instructorId);
 
             var result = await _sender.Send(query, cancellationToken);
 
@@ -113,6 +120,55 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
 
             return NoContent();
         }
-    }
+        [HttpGet("{id:guid}/roster")]
+        [Authorize(Roles = Roles.ProfessorRole + "," + Roles.AdminRole)]
+        public async Task<IActionResult> GetCourseRoster(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetCourseRosterQuery(id);
+            var result = await _sender.Send(query, cancellationToken);
 
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
+        }
+
+        /// <summary>
+        /// Exports the course roster and grades as a CSV file.
+        /// </summary>
+        [HttpGet("{id:guid}/export-grades")]
+        [Authorize(Roles = Roles.ProfessorRole + "," + Roles.AdminRole)]
+        public async Task<IActionResult> ExportGrades(Guid id, CancellationToken cancellationToken)
+        {
+            // 1. Extract the User ID from the JWT Token for security validation
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdClaim, out Guid requestingUserId))
+            {
+                return Unauthorized(new { Error = "Invalid user token." });
+            }
+
+            // 2. Check if the user is an Admin (Admins can export any course)
+            bool isAdmin = User.IsInRole(Roles.AdminRole);
+
+            // 3. Send Query
+            var query = new ExportGradesQuery(id, requestingUserId, isAdmin);
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == GradeErrors.Unauthorized)
+                {
+                    return StatusCode(403, result.Error); // 403 Forbidden
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            // 4. Return the File Result
+            // ASP.NET Core will automatically set the Content-Disposition header to trigger a file download in the browser
+            return File(
+                fileContents: result.Value.Content,
+                contentType: result.Value.ContentType,
+                fileDownloadName: result.Value.FileName);
+        }
+    }
 }

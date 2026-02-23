@@ -26,5 +26,11 @@
         void Update(Registration registration);
         Task<List<Registration>> GetByStudentAndSemesterAsync(Guid studentId, string term, int value, CancellationToken cancellationToken = default);
         Task<List<Registration>> GetActiveByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
+
+        //Fetch all students registered for a specific offering
+        Task<List<Registration>> GetByOfferingIdAsync(
+            Guid courseOfferingId,
+            CancellationToken cancellationToken = default);
     }
 }
+

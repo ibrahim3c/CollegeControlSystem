@@ -15,26 +15,32 @@ namespace CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings
 
         public async Task<Result<List<OfferingQueryResponse>>> Handle(GetAvailableOfferingsQuery request, CancellationToken cancellationToken)
         {
-            // 1. Create Value Object to query with
-            var semesterResult = Semester.Create(request.Term, request.Year);
-            if (semesterResult.IsFailure)
-            {
-                return Result<List<OfferingQueryResponse>>.Failure(semesterResult.Error);
-            }
-            var semester = semesterResult.Value;
+            Semester? semester = null;
 
-            // 2. Fetch from Repo (Must Include Course & Instructor)
-            var offerings = await unitOfWork.CourseOfferingRepository.GetBySemesterAsync(semester, cancellationToken);
+            // 1. Conditionally Create Semester Value Object if both Term and Year are provided
+            if (!string.IsNullOrWhiteSpace(request.Term) && request.Year.HasValue)
+            {
+                var semesterResult = Semester.Create(request.Term, request.Year.Value);
+                if (semesterResult.IsFailure)
+                {
+                    return Result<List<OfferingQueryResponse>>.Failure(semesterResult.Error);
+                }
+                semester = semesterResult.Value;
+            }
+
+            // 2. Fetch from Repo using the flexible query method
+            var offerings = await unitOfWork.CourseOfferingRepository.GetAvailableOfferingsAsync(
+                semester,
+                request.CourseId,
+                request.InstructorId,
+                cancellationToken);
 
             // 3. Map to DTO
-            // Note: Instructor Name logic depends on how you load Faculty/User info.
-            // Assuming your Repository Includes Faculty -> User
-
             var response = offerings.Select(o => new OfferingQueryResponse(
                 o.Id,
                 o.Course?.Code?.Value ?? "N/A",
                 o.Course?.Title ?? "Unknown Title",
-                o.Instructor.FacultyName, // Replace with actual name if Navigation Property exists
+                o.Instructor?.FacultyName ?? "Unknown Instructor",
                 o.Capacity,
                 o.CurrentEnrolled,
                 o.IsFull
