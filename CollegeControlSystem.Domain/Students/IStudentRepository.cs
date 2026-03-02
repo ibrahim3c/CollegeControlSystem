@@ -18,5 +18,9 @@
         Task<Student> GetByIdWithProgramAsync(Guid studentId, CancellationToken cancellationToken);
         //Fetch Student with deep includes (Registrations -> Offerings -> Course)
         Task<Student> GetTranscriptDataAsync(Guid studentId, CancellationToken cancellationToken);
+        Task<List<Student>> GetStudentsWithWarningsAsync(CancellationToken cancellationToken = default);
+        Task<List<Student>> GetStudentsForGraduationAuditAsync(CancellationToken cancellationToken = default);
+        // NEW: Fetches active students with their full transcripts for the Control Engine
+        Task<List<Student>> GetActiveStudentsWithTranscriptsAsync(CancellationToken cancellationToken = default);
     }
 }

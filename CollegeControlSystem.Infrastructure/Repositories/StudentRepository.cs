@@ -76,5 +76,47 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .AsSplitQuery() // Optimization for deep includes to avoid Cartesian explosion
                 .FirstOrDefaultAsync(s => s.Id == studentId, cancellationToken);
         }
+
+        public async Task<List<Student>> GetStudentsWithWarningsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .Include(s => s.Program) // Include Program to show their major in the report
+                .Where(s =>
+                    s.AcademicStatus == AcademicStatus.AcademicWarning ||
+                    s.AcademicStatus == AcademicStatus.Dismissed)
+                .OrderByDescending(s => s.ConsecutiveWarnings) // Most critical cases first
+                .ThenBy(s => s.StudentName)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<Student>> GetStudentsForGraduationAuditAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .Include(s => s.Program)
+                .Include(s => s.Registrations)
+                    .ThenInclude(r => r.CourseOffering)
+                        .ThenInclude(o => o.Course)
+                .Include(s => s.Registrations)
+                    .ThenInclude(r => r.Grade)
+                // Filter 1: Only check Senior 2 students (Level 4) with CGPA >= 2.00
+                .Where(s => s.AcademicLevel == AcademicLevel.Senior2 && s.CGPA >= 2.00m)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<Student>> GetActiveStudentsWithTranscriptsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .Include(s => s.Program)
+                .Include(s => s.Registrations)
+                    .ThenInclude(r => r.CourseOffering)
+                        .ThenInclude(o => o.Course)
+                .Include(s => s.Registrations)
+                    .ThenInclude(r => r.Grade)
+                // Only process students who are currently studying (exclude graduated or already dismissed)
+                .Where(s =>
+                    s.AcademicStatus == AcademicStatus.GoodStanding ||
+                    s.AcademicStatus == AcademicStatus.AcademicWarning)
+                .ToListAsync(cancellationToken);
+        }
     }
 }
