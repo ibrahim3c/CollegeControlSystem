@@ -1,7 +1,13 @@
-﻿using CollegeControlSystem.Application.Identity;
+﻿using CollegeControlSystem.Application.Abstractions.IService;
+using CollegeControlSystem.Application.Identity;
 using CollegeControlSystem.Domain.Abstractions;
+using CollegeControlSystem.Domain.CourseOfferings;
+using CollegeControlSystem.Domain.Courses;
 using CollegeControlSystem.Domain.Departments;
+using CollegeControlSystem.Domain.Faculties;
 using CollegeControlSystem.Domain.Identity;
+using CollegeControlSystem.Domain.Registrations;
+using CollegeControlSystem.Domain.Students;
 using CollegeControlSystem.Infrastructure.Database;
 using CollegeControlSystem.Infrastructure.Helpers;
 using CollegeControlSystem.Infrastructure.Integration;
@@ -52,8 +58,17 @@ namespace CollegeControlSystem.Infrastructure
             //#endregion
 
             services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IEmailService, EmailService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IGradeRepository, GradeRepository>();
+            services.AddScoped<ICourseOfferingRepository, CourseOfferingRepository>();
+            services.AddScoped<IFacultyRepository, FacultyRepository>();
+            services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+            
 
             #region JWTConfigs
             //(1)

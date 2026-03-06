@@ -15,7 +15,7 @@ namespace CollegeControlSystem.Application.Faculties.GetFacultyById
 
         public async Task<Result<GetFacultyByIdQueryResponse>> Handle(GetFacultyByIdQuery request, CancellationToken cancellationToken)
         {
-            var faculty = await _uow.FacultieRepository.GetByIdAsync(request.Id, cancellationToken);
+            var faculty = await _uow.FacultyRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (faculty is null)
             {

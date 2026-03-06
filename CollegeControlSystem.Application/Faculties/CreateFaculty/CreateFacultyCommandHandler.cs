@@ -68,7 +68,7 @@ namespace CollegeControlSystem.Application.Faculties.CreateFaculty
                 await userManager.DeleteAsync(user); // 🔥 rollback
                 return Result<Guid>.Failure(facultyResult.Error); 
             }
-            await _unitOfWork.FacultieRepository.AddAsync(facultyResult?.Value);
+            await _unitOfWork.FacultyRepository.AddAsync(facultyResult?.Value);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

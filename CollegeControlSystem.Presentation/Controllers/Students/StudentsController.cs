@@ -35,7 +35,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             // Returns 201 Created with a Location header pointing to the GetProfile endpoint
             return CreatedAtAction(nameof(GetStudentProfile), new { id = result.Value }, result.Value);
         }
-
+        [HttpGet("{id}/profile")]
         public async Task<IActionResult> GetStudentProfile(Guid id, CancellationToken cancellationToken)
         {
             var query = new GetStudentProfileQuery(id);

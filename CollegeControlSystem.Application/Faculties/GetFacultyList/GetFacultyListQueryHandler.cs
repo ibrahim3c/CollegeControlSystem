@@ -20,11 +20,11 @@ namespace CollegeControlSystem.Application.Faculties.GetFacultyList
 
             if (request.DepartmentId.HasValue)
             {
-                facultyMembers = await _uow.FacultieRepository.GetByDepartmentIdAsync(request.DepartmentId.Value, cancellationToken);
+                facultyMembers = await _uow.FacultyRepository.GetByDepartmentIdAsync(request.DepartmentId.Value, cancellationToken);
             }
             else
             {
-                facultyMembers = await _uow.FacultieRepository.GetAllAsync(cancellationToken);
+                facultyMembers = await _uow.FacultyRepository.GetAllAsync(cancellationToken);
             }
 
             var response = facultyMembers.Select(f => new GetFacultyListQueryResponse(

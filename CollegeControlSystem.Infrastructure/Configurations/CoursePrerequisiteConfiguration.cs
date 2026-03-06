@@ -12,7 +12,8 @@ namespace CollegeControlSystem.Infrastructure.Configurations
             builder.ToTable("CoursePrerequisites");
 
             // 2. Composite Primary Key
-            builder.HasKey(cp => new { cp.CourseId, cp.PrerequisiteCourseId });
+            //builder.HasKey(cp => new { cp.CourseId, cp.PrerequisiteCourseId });
+            builder.HasKey(cp => cp.Id);
 
             // 3. Relationships
 

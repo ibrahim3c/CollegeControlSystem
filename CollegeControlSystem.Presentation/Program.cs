@@ -27,12 +27,14 @@ namespace CollegeControlSystem.Presentation
             builder.Services.AddRateLimiting();
             builder.Services.AddHealthCheck(builder.Configuration);
 
+            builder.Services.AddSwaggerDocumentation();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                //app.MapOpenApi();
+                app.UseSwaggerDocumentation();
             }
             app.UseRateLimiter();
             app.UseHttpsRedirection();
@@ -40,7 +42,7 @@ namespace CollegeControlSystem.Presentation
             // custom middlewares
             app.UseCustomCors();
             app.UseCustomExceptionHandler();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
@@ -62,7 +64,6 @@ namespace CollegeControlSystem.Presentation
                 options.UIPath = "/health-ui"; // Dashboard path
                 options.ApiPath = "/health-ui-api"; // API used by the UI
             });
-
 
             app.Run();
         }

@@ -20,10 +20,10 @@ namespace CollegeControlSystem.Domain.Registrations
             "Registration.Duplicate",
             "Student is already registered for this course.");
 
-        public static readonly Error Overload(int maxAllowed) => new(
+        public static  Error Overload(int maxAllowed) => new(
             "Registration.Overload",
             $"Cannot register. Total credits would exceed the limit of {maxAllowed} hours.");
-        public static readonly Error PrerequisiteNotMet(Guid courseId) => new(
+        public static  Error PrerequisiteNotMet(Guid courseId) => new(
             "Registration.PrerequisiteNotMet",
             $"Prerequisite course {courseId} has not been completed.");
 
