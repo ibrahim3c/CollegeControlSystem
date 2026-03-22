@@ -5,8 +5,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'yourdockerhubusername/college-control-system'
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // ID from Jenkins Credentials manager
+        DOCKER_IMAGE = 'ihany3c/college-control-system'
+        DOCKER_CREDENTIALS_ID = 'dockerhub' // ID from Jenkins Credentials manager
         APP_VERSION = ''
     }
 
