@@ -4,6 +4,11 @@
 pipeline {
     agent any
 
+    // 1. Tell Jenkins to inject the .NET SDK into the pipeline's PATH
+    tools {
+        dotnetsdk 'dotnet-9' // Must match the EXACT name you gave it in Step 2
+    }
+
     environment {
         DOCKER_IMAGE = 'ihany3c/college-control-system'
         DOCKER_CREDENTIALS_ID = 'dockerhub' // ID from Jenkins Credentials manager
@@ -15,6 +20,7 @@ pipeline {
             steps {
                 script {
                     // Call the custom step from the shared library
+                    echo "The calculated version is ${calculateVersion()}"
                     APP_VERSION = calculateVersion()
                     currentBuild.displayName = "#${env.BUILD_NUMBER} - ${APP_VERSION}"
                 }
