@@ -4,3 +4,14 @@ services:
     build:
       context: .
       dockerfile: CollegeControlSystem.Presentation/Dockerfile
+  db:
+    image: postgres:15-alpine
+    container_name: college-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_DB=CollegeDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
