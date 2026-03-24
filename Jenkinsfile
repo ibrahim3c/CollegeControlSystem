@@ -20,9 +20,11 @@ pipeline {
             steps {
                 script {
                     // Call the custom step from the shared library
-                    echo "The calculated version is ${calculateVersion()}"
-                    APP_VERSION = calculateVersion()
-                    currentBuild.displayName = "#${env.BUILD_NUMBER} - ${APP_VERSION}"
+                    def version = calculateVersion()
+                   echo "The calculated version is ${version}"
+                   // APP_VERSION = calculateVersion()
+                   env.APP_VERSION = version
+                    currentBuild.displayName = "#${env.BUILD_NUMBER} - $env.APP_VERSION}"
                 }
             }
         }
@@ -59,23 +61,23 @@ pipeline {
             }
         }
 
-        // ---> UPDATED DEPLOY STAGE <---
-        stage('Deploy with Compose') {
-            when {
-                anyOf { branch 'master'; branch 'develop' }
-            }
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'develop') {
-                        // Pass 'Dev' and the version (e.g., 1.0.0-dev.5)
+        // // ---> UPDATED DEPLOY STAGE <---
+        //  stage('Deploy with Compose') {
+           // when {
+             //   anyOf { branch 'master'; branch 'develop' }
+           // }
+           // steps {
+                // script {
+                    //if (env.BRANCH_NAME == 'develop') {
+                   //     // Pass 'Dev' and the version (e.g., 1.0.0-dev.5)
                         deployWithCompose('Development', env.APP_VERSION)
-                    } else if (env.BRANCH_NAME == 'master') {
-                        // Pass 'Prod' and the version (e.g., 1.0.0.5)
-                        deployWithCompose('Production', env.APP_VERSION)
-                    }
-                }
-            }
-        }
+                 //   } else if (env.BRANCH_NAME == 'master') {
+               //         // Pass 'Prod' and the version (e.g., 1.0.0.5)
+             //           deployWithCompose('Production', env.APP_VERSION)
+           //         }
+         //       }
+       //     }
+     //   }
 
         stage('Deploy') {
             when {
