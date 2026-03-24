@@ -61,24 +61,6 @@ pipeline {
             }
         }
 
-        // // ---> UPDATED DEPLOY STAGE <---
-        //  stage('Deploy with Compose') {
-           // when {
-             //   anyOf { branch 'master'; branch 'develop' }
-           // }
-           // steps {
-                // script {
-                    //if (env.BRANCH_NAME == 'develop') {
-                   //     // Pass 'Dev' and the version (e.g., 1.0.0-dev.5)
-                        deployWithCompose('Development', env.APP_VERSION)
-                 //   } else if (env.BRANCH_NAME == 'master') {
-               //         // Pass 'Prod' and the version (e.g., 1.0.0.5)
-             //           deployWithCompose('Production', env.APP_VERSION)
-           //         }
-         //       }
-       //     }
-     //   }
-
         stage('Deploy') {
             when {
                 anyOf {
