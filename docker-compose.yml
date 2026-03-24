@@ -1,9 +1,19 @@
 services:
-  collegecontrolsystem.presentation:
+  api:
     image: ${DOCKER_REGISTRY-}collegecontrolsystempresentation
+    container_name: college-api
     build:
       context: .
       dockerfile: CollegeControlSystem.Presentation/Dockerfile
+    depends_on:
+      - db
+      - seq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CollegeDB;Username=postgres;Password=yourpassword
+    ports:
+      - "5000:8080"
+
   db:
     image: postgres:15-alpine
     container_name: college-db
@@ -15,3 +25,18 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  seq:
+    image: datalust/seq:latest
+    container_name: college-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+    volumes:
+      - seq_data:/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  seq_data:

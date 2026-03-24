@@ -1,12 +1,10 @@
 
 using ByteStore.Api.Extenstions;
-using CollegeControlSystem.Application;
-using CollegeControlSystem.Infrastructure;
 using CollegeControlSystem.Presentation.Extenstions;
 using CollegeControlSystem.Presentation.Middlewares;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Serilog;
 
 namespace CollegeControlSystem.Presentation
 {
@@ -15,6 +13,10 @@ namespace CollegeControlSystem.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            //serilog;
+            builder.Host.UseSerilog((context, loggerConfig) =>
+                loggerConfig.ReadFrom.Configuration(context.Configuration));
 
             // Add services to the container.
 
@@ -38,6 +40,7 @@ namespace CollegeControlSystem.Presentation
             //}
             app.UseRateLimiter();
             app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
 
             // custom middlewares
             app.UseCustomCors();
