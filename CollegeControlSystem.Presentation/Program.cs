@@ -1,5 +1,6 @@
 
 using ByteStore.Api.Extenstions;
+using CollegeControlSystem.Infrastructure.Seeders;
 using CollegeControlSystem.Presentation.Extenstions;
 using CollegeControlSystem.Presentation.Middlewares;
 using HealthChecks.UI.Client;
@@ -10,7 +11,7 @@ namespace CollegeControlSystem.Presentation
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,15 @@ namespace CollegeControlSystem.Presentation
 
 
             app.MapControllers();
+
+            // seeding
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                await RoleSeeder.SeedAsync(services);
+                await AdminSeeder.SeedAsync(services);
+            }
 
             // it cause problem of more than dbContext was found
             //  Map Health Checks JSON Endpoint => normal health check just api return json response

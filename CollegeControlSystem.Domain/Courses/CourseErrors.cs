@@ -13,8 +13,5 @@ namespace CollegeControlSystem.Domain.Courses
         public static readonly Error DuplicateCode = new("Course.DuplicateCode", "A course with this code already exists.");
         public static readonly Error CourseNotFound = new("Course.NotFound", "Target course not found.");
         public static readonly Error PrerequisiteNotFound = new("Course.PrerequisiteNotFound", "Prerequisite course does not exist.");
-
-
-
     }
 }
