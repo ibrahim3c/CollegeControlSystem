@@ -41,6 +41,18 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<Department>().Add(department);
         }
 
+        public async Task AddProgramAsync(Program program, CancellationToken cancellationToken = default)
+        {
+            await _context.Set<Program>().AddAsync(program, cancellationToken);
+        }
+
+        public async Task<Department?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Department>()
+                .Include(d => d.Programs)
+                .FirstOrDefaultAsync(d => d.DepartmentName == name, cancellationToken);
+        }
+
         public void Update(Department department)
         {
             _context.Set<Department>().Update(department);

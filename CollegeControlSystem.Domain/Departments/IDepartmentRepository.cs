@@ -11,7 +11,10 @@ namespace CollegeControlSystem.Domain.Departments
         // Useful for validation "Does Department CCE exist?"
         Task<Department?> GetByCodeAsync(string code, CancellationToken cancellationToken = default);
 
+        Task<Department?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+
         void Add(Department department);
+        Task AddProgramAsync(Program program, CancellationToken cancellationToken = default);
         void Update(Department department);
 
         // populate Program with Department data for UI context

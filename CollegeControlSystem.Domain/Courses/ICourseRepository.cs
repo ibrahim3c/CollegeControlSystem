@@ -10,6 +10,7 @@ namespace CollegeControlSystem.Domain.Courses
         Task<bool> IsCodeUniqueAsync(string normalizedCode, CancellationToken cancellationToken = default);
 
         void Add(Course course);
+        Task AddAsync(Course course, CancellationToken cancellationToken = default);
         void Update(Course course);
         Task<List<Course>> GetByDepartmentAsync(Guid? departmentId, CancellationToken cancellationToken);
         // Note: Ideally, your Repository's GetByIdWithPrerequisitesAsync should Include(c => c.Prerequisites).ThenInclude(p => p.PrerequisiteCourse)

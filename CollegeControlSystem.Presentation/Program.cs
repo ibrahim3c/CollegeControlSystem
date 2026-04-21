@@ -53,13 +53,14 @@ namespace CollegeControlSystem.Presentation
             app.MapControllers();
 
             // seeding
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
 
-                await RoleSeeder.SeedAsync(services);
-                await AdminSeeder.SeedAsync(services);
-            }
+            //    await RoleSeeder.SeedAsync(services);
+            //    await AdminSeeder.SeedAsync(services);
+            //}
+            await app.SeedDatabaseAsync();
 
             // it cause problem of more than dbContext was found
             //  Map Health Checks JSON Endpoint => normal health check just api return json response
