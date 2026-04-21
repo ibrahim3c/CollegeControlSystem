@@ -61,6 +61,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<Course>().Add(course);
         }
 
+        public async Task AddAsync(Course course, CancellationToken cancellationToken = default)
+        {
+            await _context.Set<Course>().AddAsync(course, cancellationToken);
+        }
+
         public void Update(Course course)
         {
             _context.Set<Course>().Update(course);
