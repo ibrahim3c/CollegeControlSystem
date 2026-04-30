@@ -35,6 +35,14 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<List<Student>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .Include(s => s.Program)
+                .OrderBy(s => s.AcademicNumber)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<List<Student>> GetAllActiveAsync(CancellationToken cancellationToken = default)
         {
             // "Active" typically means not Dismissed (and optionally not Graduated, depending on requirements).

@@ -13,6 +13,9 @@
         // Used for Control Engine (Batch Processing)
         Task<List<Student>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 
+        // Used to fetch all students (admin list view)
+        Task<List<Student>> GetAllAsync(CancellationToken cancellationToken = default);
+
         Task AddAsync(Student student);
         void Update(Student student);
         Task<Student> GetByIdWithProgramAsync(Guid studentId, CancellationToken cancellationToken);
