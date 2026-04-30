@@ -1,5 +1,6 @@
 ﻿using CollegeControlSystem.Application.Students.AssignAdvisor;
 using CollegeControlSystem.Application.Students.CreateStudent;
+using CollegeControlSystem.Application.Students.GetAllStudents;
 using CollegeControlSystem.Application.Students.GetStudentProfile;
 using CollegeControlSystem.Application.Students.GetTranscript;
 using CollegeControlSystem.Application.Students.UpdateStudentProfile;
@@ -35,6 +36,16 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             // Returns 201 Created with a Location header pointing to the GetProfile endpoint
             return CreatedAtAction(nameof(GetStudentProfile), new { id = result.Value }, result.Value);
         }
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> GetAllStudents(CancellationToken cancellationToken)
+        {
+            var query = new GetAllStudentsQuery();
+            var result = await _sender.Send(query, cancellationToken);
+
+            return Ok(result.Value);
+        }
+
         [HttpGet("{id}/profile")]
         public async Task<IActionResult> GetStudentProfile(Guid id, CancellationToken cancellationToken)
         {

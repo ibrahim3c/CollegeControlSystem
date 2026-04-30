@@ -6,17 +6,19 @@ Coding guidelines for .NET 9.0 ASP.NET Core Web API with Clean Architecture.
 
 1. [Build & Test Commands](#build--test-commands)
 2. [Migrations](#migrations)
-3. [Project Structure](#project-structure)
-4. [Code Style](#code-style)
-5. [Naming Conventions](#naming-conventions)
-6. [Patterns](#patterns)
-7. [File Organization](#file-organization)
-8. [Controller Conventions](#controller-conventions)
-9. [Domain-Driven Design](#domain-driven-design)
-10. [Validation](#validation)
-11. [Error Handling](#error-handling)
-12. [Database & EF Core](#database--ef-core)
-13. [Dependencies](#dependencies)
+3. [Docker](#docker)
+4. [Project Structure](#project-structure)
+5. [Code Style](#code-style)
+6. [Naming Conventions](#naming-conventions)
+7. [Patterns](#patterns)
+8. [File Organization](#file-organization)
+9. [Controller Conventions](#controller-conventions)
+10. [Domain-Driven Design](#domain-driven-design)
+11. [Validation](#validation)
+12. [Error Handling](#error-handling)
+13. [Database & EF Core](#database--ef-core)
+14. [Dependencies](#dependencies)
+15. [Business Rules Reference](#business-rules-reference)
 
 ---
 
@@ -29,21 +31,23 @@ dotnet build
 # Build Release configuration
 dotnet build --configuration Release
 
+# Build specific project
+dotnet build CollegeControlSystem.Application
+
 # Run all tests
 dotnet test
 
 # Run single test by class and method name
 dotnet test --filter "FullyQualifiedName~TestClassName.TestMethodName"
 
-# Run tests with specific project
+# Run tests for specific project
 dotnet test CollegeControlSystem.Tests --filter "FullyQualifiedName~StudentServiceTests"
 
 # Run tests with coverage
 dotnet test --collect:"XPlat Code Coverage"
-
-# Build and test specific project
-dotnet build CollegeControlSystem.Application
 ```
+
+**Note:** No test project currently exists in the solution. Create `CollegeControlSystem.Tests` when writing tests.
 
 ---
 
@@ -65,18 +69,37 @@ dotnet ef migrations script --project CollegeControlSystem.Infrastructure --star
 
 ---
 
+## Docker
+
+```bash
+# Start all services (API + PostgreSQL + Seq)
+docker-compose up -d
+
+# Rebuild and start
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f api
+
+# Stop services
+docker-compose down
+```
+
+Services: API (port 5000), PostgreSQL (port 5432), Seq (port 5341)
+
+---
+
 ## Project Structure
 
 ```
 CollegeControlSystem.sln
-├── src/
-│   ├── CollegeControlSystem.Domain/        # Entities, Value Objects, Domain Events, Errors
-│   ├── CollegeControlSystem.Application/   # Commands, Queries, Validators, Services
-│   ├── CollegeControlSystem.Infrastructure/ # EF Core, Repositories, External Services
-│   └── CollegeControlSystem.Presentation/ # Controllers, Program.cs, Middlewares
-└── tests/
-    └── CollegeControlSystem.Tests/         # Unit & Integration Tests
+├── CollegeControlSystem.Domain/          # Entities, Value Objects, Domain Events, Errors, Abstractions
+├── CollegeControlSystem.Application/     # Commands, Queries, Handlers (CQRS), Validators, Behaviors
+├── CollegeControlSystem.Infrastructure/  # EF Core, Repositories, External Services, Migrations
+└── CollegeControlSystem.Presentation/    # Controllers, Program.cs, Middlewares, Dockerfile
 ```
+
+Projects are at root level (NOT in `src/` folder).
 
 ---
 
@@ -262,7 +285,7 @@ Application/
 │   ├── Behaviors/
 │   ├── Exceptions/
 │   ├── Messaging/
-│   └── Services/
+│   └── IService/
 └── DependencyInjection.cs
 ```
 
@@ -270,11 +293,23 @@ Application/
 
 ```
 Domain/
-├── Entities/         # Domain entities
-├── ValueObjects/     # Value objects (CourseCode, etc.)
-├── Events/           # Domain events
-├── Errors/           # *Errors static classes
-└── Abstractions/     # Base classes (Entity, Result, IUnitOfWork)
+├── FeatureName/          # Entities, Repositories, Errors per feature
+├── Abstractions/         # Entity, Result, Error, IUnitOfWork, IDomainEvent
+├── Identity/             # AppUser, AppRole, Roles, Keys
+└── Shared/               # Semester, shared value objects
+```
+
+### Presentation Layer
+
+```
+Presentation/
+├── Controllers/
+│   └── FeatureName/
+│       ├── FeatureNameController.cs
+│       └── FeatureNameRequest.cs (DTOs for controller)
+├── Middlewares/
+├── Extensions/
+└── Program.cs
 ```
 
 ---
@@ -283,7 +318,7 @@ Domain/
 
 ```csharp
 [ApiController]
-[Route("api/[controller]")]  // or custom route like "api/courses"
+[Route("api/[controller]")]
 public sealed class EntityController : ControllerBase
 {
     private readonly ISender _sender;
@@ -363,6 +398,8 @@ public async Task<IActionResult> Update(
 [Authorize(Policy = "RequireEmailConfirmed")]
 ```
 
+Available roles: `Roles.AdminRole`, `Roles.StudentRole`, `Roles.InstructorRole`, `Roles.AdvisorRole`
+
 ---
 
 ## Domain-Driven Design
@@ -418,7 +455,6 @@ public class Student : Entity
 ```
 
 ### Invariants & Validation
-
 - Validate in factory methods (Entity.Create)
 - Use `Result<T>` for all factory returns
 - Keep invariants in single aggregate
@@ -458,6 +494,7 @@ public sealed class CreateStudentCommandValidator
 - Validate collection sizes before accessing elements
 - Use `.When()` for conditional validation
 - Chain `.WithMessage()` for custom error messages
+- Validators are registered automatically via `AddValidatorsFromAssembly`
 
 ---
 
@@ -541,6 +578,11 @@ builder.Property(c => c.Code)
 - Use descriptive migration names
 - Review generated SQL before applying to production
 
+### Database
+- PostgreSQL via Npgsql
+- Connection string in `Secret.json` (not committed)
+- Docker Compose provides local PostgreSQL instance
+
 ---
 
 ## Dependencies
@@ -554,6 +596,39 @@ builder.Property(c => c.Code)
 
 ---
 
+## Business Rules Reference
+
+### Grading Scale (Article 27)
+| Score | Grade | Points |
+|-------|-------|--------|
+| ≥ 97% | A+ | 4.0 |
+| 93-97% | A | 3.7 |
+| 89-93% | A- | 3.3 |
+| 84-89% | B+ | 3.0 |
+| 80-84% | B | 2.7 |
+| 76-80% | B- | 2.3 |
+| 73-76% | C+ | 2.0 |
+| 70-73% | C | 1.7 |
+| 67-70% | C- | 1.3 |
+| 64-67% | D+ | 1.0 |
+| 60-64% | D | 0.7 |
+| < 60% | F | 0.0 |
+
+### Academic Load (Article 12)
+- CGPA ≥ 3.00 → Max 21 credits
+- 2.00 ≤ CGPA < 3.00 → Max 18 credits
+- CGPA < 2.00 (Warning) → Max 14 credits
+- Graduating exception: +1 course allowed
+
+### Warning & Dismissal (Article 33)
+- Warning: SGPA < 2.00 in any semester
+- Dismissal: 4 consecutive warnings
+
+### Retake Policy (Article 28)
+- Retaken failed compulsory courses capped at B+ (3.3)
+
+---
+
 ## Notes
 
 - `ImplicitUsings` and `Nullable` are enabled in all projects
@@ -562,3 +637,7 @@ builder.Property(c => c.Code)
 - Controllers are `public sealed`
 - Use `cancellationToken` parameter on all async methods
 - Prefix async fields with underscore (`_userManager`)
+- LoggingBehavior is registered; ValidationBehavior is commented out
+- User secrets via `Secret.json` file (do not commit)
+- Swagger enabled in all environments (not just Development)
+- Health checks at `/health` and dashboard at `/health-ui`
