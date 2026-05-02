@@ -1,4 +1,4 @@
-﻿using CollegeControlSystem.Domain.Abstractions;
+using CollegeControlSystem.Domain.Abstractions;
 
 namespace CollegeControlSystem.Domain.Departments
 {
@@ -22,10 +22,18 @@ namespace CollegeControlSystem.Domain.Departments
         public static readonly Error ProgramNotFound = new("Department.ProgramNotFound", "Program not found in this department.");
         public static readonly Error NotFound = new("Department.NotFound", "Department not found.");
 
-        //public static readonly Error NoProgram = new("Department.NoProgram", "Department has no programs.");
         public static readonly Error HasPrograms = new("Department.HasPrograms", "Cannot delete department because it has associated programs.");
 
+        public static readonly Error HasFaculties = new(
+            "Department.HasFaculties",
+            "Cannot delete department because it has associated faculty members.");
 
+        public static readonly Error HasCourses = new(
+            "Department.HasCourses",
+            "Cannot delete department because it has associated courses.");
 
+        public static readonly Error ProgramHasStudents = new(
+            "Department.ProgramHasStudents",
+            "Cannot delete program because it has associated students.");
     }
 }

@@ -1,10 +1,13 @@
-﻿using CollegeControlSystem.Application.Faculties.CreateFaculty;
+﻿using CollegeControlSystem.Application.Faculties.ChangeFacultyStatus;
+using CollegeControlSystem.Application.Faculties.CreateFaculty;
 using CollegeControlSystem.Application.Faculties.GetAdvisorStudents;
 using CollegeControlSystem.Application.Faculties.GetFacultyById;
 using CollegeControlSystem.Application.Faculties.GetFacultyList;
+using CollegeControlSystem.Application.Faculties.GetFacultiesByStatus;
 using CollegeControlSystem.Application.Faculties.GetInstructorCourses;
 using CollegeControlSystem.Application.Faculties.TransferDepartment;
 using CollegeControlSystem.Application.Faculties.UpdateFacultyInfo;
+using CollegeControlSystem.Domain.Faculties;
 using CollegeControlSystem.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -41,21 +44,31 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
         }
 
         /// <summary>
-        /// Retrieves a list of faculty members, optionally filtered by Department.
+        /// Retrieves a list of faculty members, optionally filtered by Department or Status.
         /// </summary>
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetFacultyList([FromQuery] Guid? departmentId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetFacultyList(
+            [FromQuery] Guid? departmentId,
+            [FromQuery] FacultyStatus? status,
+            CancellationToken cancellationToken)
         {
-            var query = new GetFacultyListQuery(departmentId);
-            var result = await _sender.Send(query, cancellationToken);
-
-            if (result.IsFailure)
+            if (status.HasValue)
             {
-                return BadRequest(result.Error);
+                var query = new GetFacultiesByStatusQuery(status.Value);
+                var result = await _sender.Send(query, cancellationToken);
+                return Ok(result.Value);
             }
 
-            return Ok(result.Value);
+            var query2 = new GetFacultyListQuery(departmentId);
+            var result2 = await _sender.Send(query2, cancellationToken);
+
+            if (result2.IsFailure)
+            {
+                return BadRequest(result2.Error);
+            }
+
+            return Ok(result2.Value);
         }
 
         /// <summary>
@@ -88,7 +101,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
 
             if (result.IsFailure)
             {
-                return NotFound(result.Error); // Could be NotFound or BadRequest depending on error type
+                return NotFound(result.Error);
             }
 
             return NoContent();
@@ -112,6 +125,24 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
             return NoContent();
         }
 
+        /// <summary>
+        /// Changes a faculty member's status (Active, Resigned, Retired, Dismissed).
+        /// </summary>
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeFacultyStatusRequest request, CancellationToken cancellationToken)
+        {
+            var command = new ChangeFacultyStatusCommand(id, request.NewStatus);
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
         // --- INSTRUCTOR ROLE ENDPOINTS ---
 
         [HttpGet("{id}/courses")]
@@ -121,7 +152,6 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
             var query = new GetInstructorCoursesQuery(id);
             var result = await _sender.Send(query, cancellationToken);
 
-            // Even if the list is empty, it returns Success with an empty list, so we return OK.
             if (result.IsFailure)
             {
                 return BadRequest(result.Error);
@@ -148,4 +178,5 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
         }
     }
 
+    public record ChangeFacultyStatusRequest(FacultyStatus NewStatus);
 }

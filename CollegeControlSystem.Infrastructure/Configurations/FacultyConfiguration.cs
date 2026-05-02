@@ -23,6 +23,11 @@ namespace CollegeControlSystem.Infrastructure.Configurations
                 .HasMaxLength(50) // e.g. "PhD", "Professor"
                 .IsRequired();
 
+            builder.Property(f => f.Status)
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .HasDefaultValue(FacultyStatus.Active);
+
             // 4. Relationships
 
             // Link to Identity User (One-to-One)

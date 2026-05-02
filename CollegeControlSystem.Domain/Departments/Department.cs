@@ -73,5 +73,36 @@ namespace CollegeControlSystem.Domain.Departments
             Description = description;
             return Result.Success();
         }
+
+        public Program? GetProgram(Guid programId)
+        {
+            return Programs.FirstOrDefault(p => p.Id == programId);
+        }
+
+        public Result RemoveProgram(Guid programId)
+        {
+            var program = GetProgram(programId);
+            if (program is null)
+                return Result.Failure(DepartmentErrors.ProgramNotFound);
+
+            Programs.Remove(program);
+            return Result.Success();
+        }
+
+        public Result UpdateProgramName(Guid programId, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                return Result.Failure(DepartmentErrors.NameRequired);
+
+            var program = GetProgram(programId);
+            if (program is null)
+                return Result.Failure(DepartmentErrors.ProgramNotFound);
+
+            if (Programs.Any(p => p.Id != programId && p.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+                return Result.Failure(DepartmentErrors.DuplicateProgram);
+
+            program.UpdateName(newName);
+            return Result.Success();
+        }
     }
 }

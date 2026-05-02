@@ -14,5 +14,7 @@
         Task AddAsync(Faculty faculty);
         void Update(Faculty faculty);
         Task<List<Faculty>> GetAllAsync(CancellationToken cancellationToken);
+
+        Task<List<Faculty>> GetByStatusAsync(FacultyStatus status, CancellationToken cancellationToken = default);
     }
 }

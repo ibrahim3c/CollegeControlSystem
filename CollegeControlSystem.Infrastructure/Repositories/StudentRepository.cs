@@ -43,12 +43,21 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<List<Student>> GetByStatusAsync(AcademicStatus status, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .Include(s => s.Program)
+                .Where(s => s.AcademicStatus == status)
+                .OrderBy(s => s.AcademicNumber)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<List<Student>> GetAllActiveAsync(CancellationToken cancellationToken = default)
         {
             // "Active" typically means not Dismissed (and optionally not Graduated, depending on requirements).
            // Based on[cite: 197], Dismissed is a terminal status.
             return await _context.Set<Student>()
-                .Where(s => s.AcademicStatus != AcademicStatus.Dismissed)
+                .Where(s => s.AcademicStatus == AcademicStatus.GoodStanding || s.AcademicStatus==AcademicStatus.AcademicWarning)
                 .ToListAsync(cancellationToken);
         }
 
@@ -60,6 +69,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         public void Update(Student student)
         {
             _context.Set<Student>().Update(student);
+        }
+
+        public void Delete(Student student)
+        {
+            _context.Set<Student>().Remove(student);
         }
 
         public async Task<Student> GetByIdWithProgramAsync(Guid studentId, CancellationToken cancellationToken)

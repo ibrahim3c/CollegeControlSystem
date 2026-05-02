@@ -16,8 +16,10 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         public async Task<Registration?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Registration>()
-                .Include(r => r.Student) // Often needed for security checks (StudentId)
-                .Include(r => r.CourseOffering) // Often needed for logic (ReleaseSeat)
+                .Include(r => r.Student)
+                .Include(r => r.CourseOffering)
+                    .ThenInclude(co => co.Course)
+                .Include(r => r.Grade)
                 .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         }
 
@@ -94,6 +96,17 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         {
             return _context.Set<Registration>()
                 .Where(r => r.CourseOfferingId == courseOfferingId)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<Registration>> GetAllByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Registration>()
+                .Include(r => r.Student)
+                .Include(r => r.CourseOffering)
+                    .ThenInclude(co => co.Course)
+                .Include(r => r.Grade)
+                .Where(r => r.StudentId == studentId)
                 .ToListAsync(cancellationToken);
         }
     }

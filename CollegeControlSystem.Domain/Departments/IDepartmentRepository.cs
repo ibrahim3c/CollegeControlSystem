@@ -1,4 +1,4 @@
-﻿
+
 namespace CollegeControlSystem.Domain.Departments
 {
     public interface IDepartmentRepository
@@ -16,10 +16,15 @@ namespace CollegeControlSystem.Domain.Departments
         void Add(Department department);
         Task AddProgramAsync(Program program, CancellationToken cancellationToken = default);
         void Update(Department department);
+        void Delete(Department department);
 
         // populate Program with Department data for UI context
         Task<List<Program>> GetProgramsWithDepartmentAsync(CancellationToken cancellationToken = default);
-        //Task DeleteAsync(Department department);
-        // Delete typically restricted if students are linked
+
+        Task<Program?> GetProgramByIdAsync(Guid programId, CancellationToken cancellationToken = default);
+
+        Task<bool> HasStudentsAsync(Guid programId, CancellationToken cancellationToken = default);
+
+        void RemoveProgram(Program program);
     }
 }

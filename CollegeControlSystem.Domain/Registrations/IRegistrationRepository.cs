@@ -31,6 +31,8 @@
         Task<List<Registration>> GetByOfferingIdAsync(
             Guid courseOfferingId,
             CancellationToken cancellationToken = default);
+
+        Task<List<Registration>> GetAllByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
     }
 }
 

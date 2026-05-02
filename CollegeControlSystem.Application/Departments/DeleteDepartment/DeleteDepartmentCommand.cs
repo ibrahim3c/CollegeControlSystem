@@ -1,6 +1,6 @@
-﻿//using CollegeControlSystem.Application.Abstractions.Messaging;
+using CollegeControlSystem.Application.Abstractions.Messaging;
 
-//namespace CollegeControlSystem.Application.Departments.DeleteDepartment
-//{
-//    public sealed record DeleteDepartmentCommand(Guid DepartmentId) : ICommand;
-//}
+namespace CollegeControlSystem.Application.Departments.DeleteDepartment
+{
+    public sealed record DeleteDepartmentCommand(Guid DepartmentId) : ICommand;
+}

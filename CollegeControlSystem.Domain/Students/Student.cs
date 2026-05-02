@@ -218,7 +218,6 @@ namespace CollegeControlSystem.Domain.Students
             }
             if (!string.IsNullOrWhiteSpace(newNationalId))
             {
-                // National ID validation for Egyptian pattern (14 digits)
                 if (newNationalId.Length == 14 && newNationalId.All(char.IsDigit))
                 {
                     NationalId = newNationalId;
@@ -229,6 +228,18 @@ namespace CollegeControlSystem.Domain.Students
                 }
             }
             return Result.Success();
+        }
+
+        public void Dismiss()
+        {
+            AcademicStatus = AcademicStatus.Dismissed;
+            RaiseDomainEvent(new StudentDismissedDomainEvent(
+                StudentId: this.Id,
+                AcademicNumber: this.AcademicNumber,
+                Reason: "Manually dismissed by administrator.",
+                ConsecutiveWarningsCount: this.ConsecutiveWarnings,
+                OccurredOn: DateTime.UtcNow
+            ));
         }
     }
 }
