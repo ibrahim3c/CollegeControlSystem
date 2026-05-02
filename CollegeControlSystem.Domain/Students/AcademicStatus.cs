@@ -8,6 +8,7 @@
         AcademicWarning = 2,
 
         // "Four consecutive متتاليه academic warnings" 
-        Dismissed = 3
+        Dismissed = 3,
+        Graduated=4,
     }
 }

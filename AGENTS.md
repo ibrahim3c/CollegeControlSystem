@@ -266,6 +266,11 @@ public interface IUnitOfWork
 }
 ```
 
+**Handler Dependency Rule:**
+- Inject **only** `IUnitOfWork` in command/query handlers
+- Access repositories via `_unitOfWork.RepositoryName` (e.g., `_unitOfWork.StudentRepository`)
+- **NEVER** inject individual repositories alongside `IUnitOfWork`
+
 ---
 
 ## File Organization

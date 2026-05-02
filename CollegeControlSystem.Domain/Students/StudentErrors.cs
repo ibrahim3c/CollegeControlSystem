@@ -22,5 +22,12 @@ namespace CollegeControlSystem.Domain.Students
         public static readonly Error StudentNotFound = new(
             "Student.NotFound", "Student not found.");
 
+        public static readonly Error AlreadyDismissed = new(
+            "Student.AlreadyDismissed", "Student is already dismissed.");
+
+        public static readonly Error CannotDeleteStudentWithRegistrations = new(
+            "Student.CannotDeleteWithRegistrations",
+            "Cannot delete a student with active or completed course registrations.");
+
     }
 }

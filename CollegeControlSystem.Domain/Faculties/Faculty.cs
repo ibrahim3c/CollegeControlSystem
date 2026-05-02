@@ -20,6 +20,7 @@ namespace CollegeControlSystem.Domain.Faculties
             Degree = degree;
             FacultyName = facultyName;
             AppUserId = appUserId;
+            Status = FacultyStatus.Active;
         }
 
         public string FacultyName { get; private set; }
@@ -29,6 +30,8 @@ namespace CollegeControlSystem.Domain.Faculties
 
         public string AppUserId { get; private set; } // FK to Identity User
         public AppUser AppUser { get; private set; } // Navigation property
+
+        public FacultyStatus Status { get; private set; } = FacultyStatus.Active;
 
         // Factory Method
         public static Result<Faculty> Create(
@@ -84,6 +87,11 @@ namespace CollegeControlSystem.Domain.Faculties
 
             DepartmentId = newDepartmentId;
             return Result.Success();
+        }
+
+        public void ChangeStatus(FacultyStatus newStatus)
+        {
+            Status = newStatus;
         }
     }
 }

@@ -1,8 +1,13 @@
-﻿using CollegeControlSystem.Application.Departments.AddProgram;
+using CollegeControlSystem.Application.Departments.AddProgram;
 using CollegeControlSystem.Application.Departments.CreateDepartment;
+using CollegeControlSystem.Application.Departments.DeleteDepartment;
+using CollegeControlSystem.Application.Departments.DeleteProgram;
+using CollegeControlSystem.Application.Departments.GetDepartmentById;
 using CollegeControlSystem.Application.Departments.GetDepartments;
+using CollegeControlSystem.Application.Departments.GetProgramById;
 using CollegeControlSystem.Application.Departments.GetPrograms;
 using CollegeControlSystem.Application.Departments.UpdateDepartment;
+using CollegeControlSystem.Application.Departments.UpdateProgram;
 using CollegeControlSystem.Application.Departments.UpdateProgramCredits;
 using CollegeControlSystem.Domain.Departments;
 using CollegeControlSystem.Domain.Identity;
@@ -59,6 +64,22 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetDepartmentById(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetDepartmentByIdQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return NotFound(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
         [HttpPut("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateDepartment(
@@ -82,6 +103,27 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             }
 
             return NoContent(); // Standard 204 response for updates
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> DeleteDepartment(Guid id, CancellationToken cancellationToken)
+        {
+            var command = new DeleteDepartmentCommand(id);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == DepartmentErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
         }
 
         // --- Program Sub-Resources ---
@@ -147,6 +189,74 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             if (result.IsFailure)
             {
                 if (result.Error == DepartmentErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("{departmentId:guid}/programs/{programId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetProgramById(
+            Guid departmentId,
+            Guid programId,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetProgramByIdQuery(departmentId, programId);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return NotFound(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpPut("{departmentId:guid}/programs/{programId:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> UpdateProgram(
+            Guid departmentId,
+            Guid programId,
+            [FromBody] UpdateProgramRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateProgramCommand(departmentId, programId, request.Name);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == DepartmentErrors.NotFound || result.Error == DepartmentErrors.ProgramNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{departmentId:guid}/programs/{programId:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> DeleteProgram(
+            Guid departmentId,
+            Guid programId,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteProgramCommand(departmentId, programId);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == DepartmentErrors.NotFound || result.Error == DepartmentErrors.ProgramNotFound)
                 {
                     return NotFound(result.Error);
                 }

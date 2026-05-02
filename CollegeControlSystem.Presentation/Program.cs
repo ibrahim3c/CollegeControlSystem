@@ -40,11 +40,11 @@ namespace CollegeControlSystem.Presentation
                 app.UseSwaggerDocumentation();
             //}
             app.UseRateLimiter();
+            app.UseCustomCors();
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
 
             // custom middlewares
-            app.UseCustomCors();
             app.UseCustomExceptionHandler();
             app.UseAuthentication();
             app.UseAuthorization();

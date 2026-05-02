@@ -30,6 +30,15 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<List<Faculty>> GetByStatusAsync(FacultyStatus status, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Faculty>()
+                .Include(f => f.Department)
+                .Where(f => f.Status == status)
+                .OrderBy(f => f.FacultyName)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<List<Faculty>> GetByDepartmentIdAsync(Guid departmentId, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Faculty>()

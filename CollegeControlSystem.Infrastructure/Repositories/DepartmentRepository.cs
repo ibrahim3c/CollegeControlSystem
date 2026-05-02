@@ -1,4 +1,5 @@
-﻿using CollegeControlSystem.Domain.Departments;
+using CollegeControlSystem.Domain.Departments;
+using CollegeControlSystem.Domain.Students;
 using CollegeControlSystem.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,6 +59,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<Department>().Update(department);
         }
 
+        public void Delete(Department department)
+        {
+            _context.Set<Department>().Remove(department);
+        }
+
         public async Task<List<Program>> GetProgramsWithDepartmentAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Set<Program>()
@@ -65,6 +71,24 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .OrderBy(p => p.Department.DepartmentName)
                 .ThenBy(p => p.Name)
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Program?> GetProgramByIdAsync(Guid programId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Program>()
+                .Include(p => p.Department)
+                .FirstOrDefaultAsync(p => p.Id == programId, cancellationToken);
+        }
+
+        public async Task<bool> HasStudentsAsync(Guid programId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Student>()
+                .AnyAsync(s => s.ProgramId == programId, cancellationToken);
+        }
+
+        public void RemoveProgram(Program program)
+        {
+            _context.Set<Program>().Remove(program);
         }
     }
 }

@@ -2,9 +2,12 @@
 using CollegeControlSystem.Application.Registrations.DropCourse;
 using CollegeControlSystem.Application.Registrations.GetAvailableCourses;
 using CollegeControlSystem.Application.Registrations.GetPendingRegistrations;
+using CollegeControlSystem.Application.Registrations.GetRegistrationById;
+using CollegeControlSystem.Application.Registrations.GetStudentRegistrations;
 using CollegeControlSystem.Application.Registrations.GetStudentSchedule;
 using CollegeControlSystem.Application.Registrations.RegisterCourse;
 using CollegeControlSystem.Application.Registrations.SubmitGrades;
+using CollegeControlSystem.Application.Registrations.WithdrawCourse;
 using CollegeControlSystem.Domain.CourseOfferings;
 using CollegeControlSystem.Domain.Identity;
 using CollegeControlSystem.Domain.Registrations;
@@ -125,6 +128,35 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return NoContent();
         }
 
+        [HttpPut("{id:guid}/withdraw")]
+        [Authorize(Roles = Roles.StudentRole)]
+        public async Task<IActionResult> WithdrawCourse(
+            Guid id,
+            [FromBody] WithdrawCourseRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new WithdrawCourseCommand(id, request.StudentId);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == RegistrationErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == RegistrationErrors.Unauthorized)
+                {
+                    return StatusCode(403, result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
         [HttpGet("pending")]
         [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetPendingRegistrations(
@@ -191,6 +223,52 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
                 }
 
                 // E.g., Invalid Semester Term provided
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("student/{studentId:guid}")]
+        [Authorize(Roles = Roles.StudentRole + "," + Roles.AdvisorRole + "," + Roles.AdminRole)]
+        public async Task<IActionResult> GetStudentRegistrations(
+            Guid studentId,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetStudentRegistrationsQuery(studentId);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == StudentErrors.StudentNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetById(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetRegistrationByIdQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == RegistrationErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
                 return BadRequest(result.Error);
             }
 
