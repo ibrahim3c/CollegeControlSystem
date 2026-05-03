@@ -20,7 +20,9 @@ namespace CollegeControlSystem.Domain.Departments
         public string? Description { get; private set; }
         //public bool IsActive { get; private set; }
 
-        public List<Program> Programs { get; private set; } = new();
+        //public List<Program> Programs { get; private set; } = new();
+        private readonly List<Program> _programs = new();
+        public IReadOnlyCollection<Program> Programs => _programs;
 
         public static Result<Department> Create( string name, string? description)
         {
@@ -45,7 +47,7 @@ namespace CollegeControlSystem.Domain.Departments
             var result =Program.Create(name, requiredCredits, this.Id);
             if (result.IsFailure) return Result<Program>.Failure(result.Error);
             var program = result.Value!;
-            Programs.Add(program);
+            _programs.Add(program);
 
             return Result<Program>.Success(program);
         }
@@ -85,7 +87,7 @@ namespace CollegeControlSystem.Domain.Departments
             if (program is null)
                 return Result.Failure(DepartmentErrors.ProgramNotFound);
 
-            Programs.Remove(program);
+            _programs.Remove(program);
             return Result.Success();
         }
 

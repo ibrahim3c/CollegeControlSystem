@@ -15,14 +15,20 @@ namespace CollegeControlSystem.Application.Departments.UpdateProgram
 
         public async Task<Result> Handle(UpdateProgramCommand request, CancellationToken cancellationToken)
         {
-            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
+            //var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
 
-            if (department is null)
+            //if (department is null)
+            //{
+            //    return Result.Failure(DepartmentErrors.NotFound);
+            //}
+            var program = await _unitOfWork.DepartmentRepository.GetProgramByIdAsync(request.ProgramId, cancellationToken);
+            if (program is null)
             {
-                return Result.Failure(DepartmentErrors.NotFound);
+                return Result.Failure(DepartmentErrors.ProgramNotFound);
             }
 
-            var result = department.UpdateProgramName(request.ProgramId, request.Name);
+            //var result = department.UpdateProgramName(request.ProgramId, request.Name);
+            var result = program.UpdateName(request.Name);
 
             if (result.IsFailure)
             {

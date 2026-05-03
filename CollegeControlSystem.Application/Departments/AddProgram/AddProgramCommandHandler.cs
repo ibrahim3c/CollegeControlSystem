@@ -9,7 +9,6 @@ namespace CollegeControlSystem.Application.Departments.AddProgram
         private readonly IUnitOfWork _unitOfWork;
 
         public AddProgramCommandHandler(
-            IDepartmentRepository departmentRepository,
             IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -25,15 +24,22 @@ namespace CollegeControlSystem.Application.Departments.AddProgram
                 return Result<Guid>.Failure(DepartmentErrors.NotFound);
             }
 
-            // 2. Execute Domain Logic (Add Program)
-            var programResult = department.AddProgram(request.Name, request.RequiredCredits);
+            // 2. Check for duplicates within this department
+            if (department.Programs.Any(p => p.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Result<Guid>.Failure(DepartmentErrors.DuplicateProgram);
+            }
+
+            // 3. Create Program via factory (domain validation)
+            var programResult = Program.Create(request.Name, request.RequiredCredits, request.DepartmentId);
 
             if (programResult.IsFailure)
             {
                 return Result<Guid>.Failure(programResult.Error);
             }
 
-            // 3. Save Changes
+            // 4. Persist via repository (ensures EF Core tracks as Added)
+            await _unitOfWork.DepartmentRepository.AddProgramAsync(programResult.Value, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Return the new Program ID

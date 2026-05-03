@@ -6,8 +6,8 @@ namespace CollegeControlSystem.Application.Departments.DeleteProgram
     {
         public DeleteProgramCommandValidator()
         {
-            RuleFor(x => x.DepartmentId)
-                .NotEmpty().WithMessage("DepartmentId cannot be empty.");
+            //RuleFor(x => x.DepartmentId)
+            //    .NotEmpty().WithMessage("DepartmentId cannot be empty.");
 
             RuleFor(x => x.ProgramId)
                 .NotEmpty().WithMessage("ProgramId cannot be empty.");

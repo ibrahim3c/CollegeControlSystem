@@ -3,7 +3,7 @@
 namespace CollegeControlSystem.Application.Departments.DeleteProgram
 {
     public sealed record DeleteProgramCommand(
-        Guid DepartmentId,
+        //Guid DepartmentId,
         Guid ProgramId
     ) : ICommand;
 }

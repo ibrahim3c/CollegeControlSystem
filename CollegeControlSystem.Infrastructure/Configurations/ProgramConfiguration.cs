@@ -27,11 +27,12 @@ namespace CollegeControlSystem.Infrastructure.Configurations
             // Already configured in DepartmentConfiguration, but we can reinforce the FK here.
             builder.HasOne(p => p.Department)
                 .WithMany(d => d.Programs)
-                .HasForeignKey(p => p.DepartmentId);
+                .HasForeignKey(p => p.DepartmentId)
+                .OnDelete(DeleteBehavior.Restrict); ;
 
             // 5. Indexes
-            // Program names should be unique per Department ideally, or globally.
-            builder.HasIndex(p => p.Name).IsUnique();
+            // Program names should be unique per Department
+            builder.HasIndex(p => new { p.DepartmentId, p.Name }).IsUnique();
         }
     }
 }

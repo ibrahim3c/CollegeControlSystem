@@ -27,12 +27,12 @@ namespace CollegeControlSystem.Infrastructure.Configurations
             // 4. Relationships
             // A Department has many Programs.
             // We configure the relationship here to ensure the navigation property is handled correctly.
-            builder.HasMany(d => d.Programs)
-                .WithOne(p => p.Department)
-                .HasForeignKey(p => p.DepartmentId)
-                // Rule: "Cannot delete a Department if it has linked Programs" [cite: 195, 308]
-                            // Therefore, we use Restrict instead of Cascade.
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(d => d.Programs)
+            //    .WithOne(p => p.Department)
+            //    .HasForeignKey(p => p.DepartmentId)
+            //    // Rule: "Cannot delete a Department if it has linked Programs" [cite: 195, 308]
+            //                // Therefore, we use Restrict instead of Cascade.
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // 5. Indexes
             builder.HasIndex(d => d.DepartmentName).IsUnique();
