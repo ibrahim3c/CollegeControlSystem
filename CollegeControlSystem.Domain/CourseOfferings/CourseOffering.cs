@@ -31,6 +31,7 @@ namespace CollegeControlSystem.Domain.CourseOfferings
 
         public int Capacity { get; private set; }
         public int CurrentEnrolled { get; private set; }
+        public bool IsCancelled { get; private set; }
 
         // Derived property useful for UI
         public bool IsFull => CurrentEnrolled >= Capacity;
@@ -65,6 +66,9 @@ namespace CollegeControlSystem.Domain.CourseOfferings
         /// </summary>
         public Result ReserveSeat()
         {
+            if (IsCancelled)
+                return Result.Failure(CourseOfferingErrors.OfferingCancelled);
+
             if (CurrentEnrolled >= Capacity)
             {
                 return Result.Failure(CourseOfferingErrors.CapacityExceeded);
@@ -107,6 +111,18 @@ namespace CollegeControlSystem.Domain.CourseOfferings
                 return Result.Failure(CourseOfferingErrors.InstructorRequired);
             }
                 InstructorId = newInstructorId;
+            return Result.Success();
+        }
+
+        public Result Cancel()
+        {
+            if (IsCancelled)
+                return Result.Failure(CourseOfferingErrors.AlreadyCancelled);
+
+            if (CurrentEnrolled > 0)
+                return Result.Failure(CourseOfferingErrors.HasEnrolledStudents);
+
+            IsCancelled = true;
             return Result.Success();
         }
     }

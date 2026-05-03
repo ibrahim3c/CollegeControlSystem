@@ -1,6 +1,9 @@
-﻿using CollegeControlSystem.Application.CourseOfferings.ChangeInstructor;
+﻿using CollegeControlSystem.Application.CourseOfferings.CancelCourseOffering;
+using CollegeControlSystem.Application.CourseOfferings.ChangeInstructor;
 using CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering;
+using CollegeControlSystem.Application.CourseOfferings.DeleteCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings;
+using CollegeControlSystem.Application.CourseOfferings.GetOfferingById;
 using CollegeControlSystem.Application.CourseOfferings.GetRoster;
 using CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacity;
 using CollegeControlSystem.Application.Registrations.ExportGrades;
@@ -169,6 +172,86 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
                 fileContents: result.Value.Content,
                 contentType: result.Value.ContentType,
                 fileDownloadName: result.Value.FileName);
+        }
+
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetById(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetOfferingByIdQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseOfferingErrors.OfferingNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> DeleteOffering(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteCourseOfferingCommand(id);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseOfferingErrors.OfferingNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == CourseOfferingErrors.HasRegistrations)
+                {
+                    return Conflict(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:guid}/cancel")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> CancelOffering(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new CancelCourseOfferingCommand(id);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseOfferingErrors.OfferingNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == CourseOfferingErrors.HasEnrolledStudents ||
+                    result.Error == CourseOfferingErrors.AlreadyCancelled)
+                {
+                    return Conflict(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
         }
     }
 }

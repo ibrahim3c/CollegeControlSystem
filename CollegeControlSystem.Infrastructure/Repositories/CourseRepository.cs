@@ -70,5 +70,10 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         {
             _context.Set<Course>().Update(course);
         }
+
+        public void Delete(Course course)
+        {
+            _context.Set<Course>().Remove(course);
+        }
     }
 }

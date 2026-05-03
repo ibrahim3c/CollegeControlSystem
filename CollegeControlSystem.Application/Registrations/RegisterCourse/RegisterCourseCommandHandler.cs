@@ -31,6 +31,9 @@ namespace CollegeControlSystem.Application.Registrations.RegisterCourse
             var offering = await _unitOfWork.CourseOfferingRepository.GetByIdAsync(request.CourseOfferingId, cancellationToken);
             if (offering is null) return Result<Guid>.Failure(CourseOfferingErrors.OfferingNotFound);
 
+            if (offering.IsCancelled)
+                return Result<Guid>.Failure(CourseOfferingErrors.OfferingCancelled);
+
             // 2. Check: Is student already registered?
             var existingRegistration = await _unitOfWork.RegistrationRepository.GetByStudentAndOfferingAsync(request.StudentId, request.CourseOfferingId, cancellationToken);
             if (existingRegistration is not null)

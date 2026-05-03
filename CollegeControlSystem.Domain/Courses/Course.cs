@@ -98,5 +98,32 @@ namespace CollegeControlSystem.Domain.Courses
             }
             return Result.Success();
         }
+
+        public Result Update(
+            Guid departmentId,
+            string title,
+            string description,
+            int credits,
+            int lectureHours,
+            int labHours)
+        {
+            if (departmentId == Guid.Empty)
+                return Result.Failure(Error.EmptyId("Department"));
+
+            if (lectureHours < 0 || labHours < 0)
+                return Result.Failure(CourseErrors.InvalidHours);
+
+            if (credits <= 0)
+                return Result.Failure(CourseErrors.CreditsInvalid);
+
+            DepartmentId = departmentId;
+            Title = title;
+            Description = description;
+            Credits = credits;
+            LectureHours = lectureHours;
+            LabHours = labHours;
+
+            return Result.Success();
+        }
     }
 }
