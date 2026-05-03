@@ -15,14 +15,19 @@ namespace CollegeControlSystem.Application.Departments.UpdateProgramCredits
 
         public async Task<Result> Handle(UpdateProgramCreditsCommand request, CancellationToken cancellationToken)
         {
-            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
-            if (department is null)
+            //var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
+            //if (department is null)
+            //{
+            //    return Result.Failure(DepartmentErrors.NotFound);
+            //}
+
+            //var result = department.UpdateProgramCredits(request.ProgramId, request.NewRequiredCredits);
+            var program = await _unitOfWork.DepartmentRepository.GetProgramByIdAsync(request.ProgramId, cancellationToken);
+            if (program is null)
             {
-                return Result.Failure(DepartmentErrors.NotFound);
+                return Result.Failure(DepartmentErrors.ProgramNotFound);
             }
-
-            var result = department.UpdateProgramCredits(request.ProgramId, request.NewRequiredCredits);
-
+            var result =program.UpdateCredits(request.NewRequiredCredits);
             if (result.IsFailure)
             {
                 return result;

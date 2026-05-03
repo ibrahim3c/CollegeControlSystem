@@ -15,14 +15,15 @@ namespace CollegeControlSystem.Application.Departments.DeleteProgram
 
         public async Task<Result> Handle(DeleteProgramCommand request, CancellationToken cancellationToken)
         {
-            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
+            //var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(request.DepartmentId, cancellationToken);
 
-            if (department is null)
-            {
-                return Result.Failure(DepartmentErrors.NotFound);
-            }
+            //if (department is null)
+            //{
+            //    return Result.Failure(DepartmentErrors.NotFound);
+            //}
 
-            var program = department.GetProgram(request.ProgramId);
+            //var program = department.GetProgram(request.ProgramId);
+            var program = await _unitOfWork.DepartmentRepository.GetProgramByIdAsync(request.ProgramId, cancellationToken);
             if (program is null)
             {
                 return Result.Failure(DepartmentErrors.ProgramNotFound);
@@ -34,11 +35,13 @@ namespace CollegeControlSystem.Application.Departments.DeleteProgram
                 return Result.Failure(DepartmentErrors.ProgramHasStudents);
             }
 
-            var removeResult = department.RemoveProgram(request.ProgramId);
-            if (removeResult.IsFailure)
-            {
-                return removeResult;
-            }
+             _unitOfWork.DepartmentRepository.RemoveProgram(program);
+
+            //var removeResult = department.RemoveProgram(request.ProgramId);
+            //if (removeResult.IsFailure)
+            //{
+            //    return removeResult;
+            //}
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();

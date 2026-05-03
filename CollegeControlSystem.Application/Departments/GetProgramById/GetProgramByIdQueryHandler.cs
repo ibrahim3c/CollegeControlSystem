@@ -22,10 +22,10 @@ namespace CollegeControlSystem.Application.Departments.GetProgramById
                 return Result<ProgramDetailResponse>.Failure(DepartmentErrors.ProgramNotFound);
             }
 
-            if (program.DepartmentId != request.DepartmentId)
-            {
-                return Result<ProgramDetailResponse>.Failure(DepartmentErrors.ProgramNotFound);
-            }
+            //if (program.DepartmentId != request.DepartmentId)
+            //{
+            //    return Result<ProgramDetailResponse>.Failure(DepartmentErrors.ProgramNotFound);
+            //}
 
             var response = new ProgramDetailResponse(
                 program.Id,

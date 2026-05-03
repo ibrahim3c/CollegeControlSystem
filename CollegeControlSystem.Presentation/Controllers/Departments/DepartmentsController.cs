@@ -171,18 +171,24 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
-        [HttpPut("{departmentId:guid}/programs/{programId:guid}/credits")]
+        //[HttpPut("{departmentId:guid}/programs/{programId:guid}/credits")]
+        [HttpPut("programs/{programId:guid}/credits")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgramCredits(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             [FromBody] UpdateProgramCreditsRequest request,
             CancellationToken cancellationToken)
         {
+            //var command = new UpdateProgramCreditsCommand(
+            //    departmentId,
+            //    programId,
+            //    request.NewRequiredCredits);
+
             var command = new UpdateProgramCreditsCommand(
-                departmentId,
                 programId,
                 request.NewRequiredCredits);
+
 
             var result = await _sender.Send(command, cancellationToken);
 
@@ -199,14 +205,16 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return NoContent();
         }
 
-        [HttpGet("{departmentId:guid}/programs/{programId:guid}")]
+        //[HttpGet("{departmentId:guid}/programs/{programId:guid}")]
+        [HttpGet("programs/{programId:guid}")]
         [Authorize]
         public async Task<IActionResult> GetProgramById(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             CancellationToken cancellationToken)
         {
-            var query = new GetProgramByIdQuery(departmentId, programId);
+            //var query = new GetProgramByIdQuery(departmentId, programId);
+            var query = new GetProgramByIdQuery( programId);
 
             var result = await _sender.Send(query, cancellationToken);
 
@@ -218,15 +226,17 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
-        [HttpPut("{departmentId:guid}/programs/{programId:guid}")]
+        //[HttpPut("{departmentId:guid}/programs/{programId:guid}")]
+        [HttpPut("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgram(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             [FromBody] UpdateProgramRequest request,
             CancellationToken cancellationToken)
         {
-            var command = new UpdateProgramCommand(departmentId, programId, request.Name);
+            //var command = new UpdateProgramCommand(departmentId, programId, request.Name);
+            var command = new UpdateProgramCommand( programId, request.Name);
 
             var result = await _sender.Send(command, cancellationToken);
 
@@ -243,14 +253,16 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return NoContent();
         }
 
-        [HttpDelete("{departmentId:guid}/programs/{programId:guid}")]
+        //[HttpDelete("{departmentId:guid}/programs/{programId:guid}")]
+        [HttpDelete("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteProgram(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             CancellationToken cancellationToken)
         {
-            var command = new DeleteProgramCommand(departmentId, programId);
+            //var command = new DeleteProgramCommand(departmentId, programId);
+            var command = new DeleteProgramCommand( programId);
 
             var result = await _sender.Send(command, cancellationToken);
 

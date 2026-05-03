@@ -3,7 +3,7 @@
 namespace CollegeControlSystem.Application.Departments.UpdateProgram
 {
     public sealed record UpdateProgramCommand(
-        Guid DepartmentId,
+        //Guid DepartmentId,
         Guid ProgramId,
         string Name
     ) : ICommand;

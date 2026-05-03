@@ -2,24 +2,6 @@
 
 Generated on: 2026-05-01
 
-## 6. CourseOfferings
-
-| # | HTTP Method | Route | Action | Description |
-|---|-------------|-------|--------|-------------|
-| 1 | GET | `api/course-offerings/{id}` | `GetById` | Get offering by ID |
-| 2 | DELETE | `api/course-offerings/{id}` | `DeleteOffering` | Delete offering |
-| 3 | PUT | `api/course-offerings/{id}/cancel` | `CancelOffering` | Cancel an offering |
-
----
-
-## 7. Faculties
-
-| # | HTTP Method | Route | Action | Description |
-|---|-------------|-------|--------|-------------|
-| 1 | DELETE | `api/faculty/{id}` | `DeleteFaculty` | Delete faculty member |
-| 2 | GET | `api/faculty/{id}/schedule` | `GetFacultySchedule` | Get faculty teaching schedule |
-
----
 
 ## 9. Grades
 

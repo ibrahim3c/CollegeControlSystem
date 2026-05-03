@@ -47,6 +47,12 @@ namespace CollegeControlSystem.Infrastructure.Database
                     .SelectMany(entity => entity.GetDomainEvents())
                     .ToList();
 
+                //foreach (var entry in ChangeTracker.Entries())
+                //{
+                //    Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
+                //}
+
+
                 // Save changes first
                 var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 

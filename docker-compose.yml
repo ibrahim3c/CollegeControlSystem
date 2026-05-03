@@ -1,6 +1,6 @@
 services:
   api:
-    image: ${DOCKER_REGISTRY-}collegecontrolsystempresentation
+    image: ${DOCKER_REGISTRY-}collegecontrolsystem
     container_name: college-api
     build:
       context: .

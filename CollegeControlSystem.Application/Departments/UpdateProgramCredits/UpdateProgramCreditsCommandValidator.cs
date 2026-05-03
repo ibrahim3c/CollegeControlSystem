@@ -5,8 +5,8 @@ namespace CollegeControlSystem.Application.Departments.UpdateProgramCredits
     {
         public UpdateProgramCreditsCommandValidator()
         {
-            RuleFor(x => x.DepartmentId)
-                .NotEmpty().WithMessage("DepartmentId cannot be empty.");
+            //RuleFor(x => x.DepartmentId)
+            //    .NotEmpty().WithMessage("DepartmentId cannot be empty.");
             RuleFor(x => x.ProgramId)
                 .NotEmpty().WithMessage("ProgramId cannot be empty.");
             RuleFor(x => x.NewRequiredCredits)
