@@ -27,5 +27,21 @@ namespace CollegeControlSystem.Domain.CourseOfferings
         public static readonly Error DuplicateOffering = new(
             "CourseOffering.Duplicate",
             "This course is already offered by the same instructor in the same semester.");
+
+        public static readonly Error AlreadyCancelled = new(
+            "CourseOffering.AlreadyCancelled",
+            "This course offering has already been cancelled.");
+
+        public static readonly Error HasEnrolledStudents = new(
+            "CourseOffering.HasEnrolledStudents",
+            "Cannot cancel course offering because students are already enrolled.");
+
+        public static readonly Error HasRegistrations = new(
+            "CourseOffering.HasRegistrations",
+            "Cannot delete course offering because students are registered.");
+
+        public static readonly Error OfferingCancelled = new(
+            "CourseOffering.OfferingCancelled",
+            "This course offering has been cancelled and cannot be used.");
     }
 }

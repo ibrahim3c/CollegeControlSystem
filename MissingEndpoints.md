@@ -2,18 +2,6 @@
 
 Generated on: 2026-05-01
 
-
-
-## 5. Courses
-
-| # | HTTP Method | Route | Action | Description |
-|---|-------------|-------|--------|-------------|
-| 1 | PUT | `api/courses/{id}` | `UpdateCourse` | Update course details |
-| 2 | DELETE | `api/courses/{id}` | `DeleteCourse` | Delete course |
-| 3 | GET | `api/courses/{id}/prerequisites` | `GetPrerequisites` | Get all prerequisites for a course |
-
----
-
 ## 6. CourseOfferings
 
 | # | HTTP Method | Route | Action | Description |
@@ -30,16 +18,6 @@ Generated on: 2026-05-01
 |---|-------------|-------|--------|-------------|
 | 1 | DELETE | `api/faculty/{id}` | `DeleteFaculty` | Delete faculty member |
 | 2 | GET | `api/faculty/{id}/schedule` | `GetFacultySchedule` | Get faculty teaching schedule |
-
----
-
-## 8. Identity / Accounts
-
-| # | HTTP Method | Route | Action | Description |
-|---|-------------|-------|--------|-------------|
-| 1 | POST | `api/accounts/register` | `Register` | User registration (command exists, endpoint commented out) |
-| 2 | PUT | `api/accounts/change-password` | `ChangePassword` | Change password for authenticated user |
-| 3 | POST | `api/accounts/logout` | `Logout` | Invalidate all tokens |
 
 ---
 

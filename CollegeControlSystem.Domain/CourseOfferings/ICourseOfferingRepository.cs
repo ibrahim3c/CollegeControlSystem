@@ -15,6 +15,7 @@ namespace CollegeControlSystem.Domain.CourseOfferings
 
         void Add(CourseOffering offering);
         void Update(CourseOffering offering);
+        void Delete(CourseOffering offering);
         Task<IEnumerable<CourseOffering>> GetByInstructorIdAsync(Guid instructorId, CancellationToken cancellationToken);
         // Delete is usually rarely used; usually we 'Archive' or 'Cancel' via status
         Task<List<CourseOffering>> GetAvailableOfferingsAsync(

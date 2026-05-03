@@ -1,8 +1,11 @@
 ﻿using CollegeControlSystem.Application.Courses.AddPrerequisite;
 using CollegeControlSystem.Application.Courses.CreateCourse;
+using CollegeControlSystem.Application.Courses.DeleteCourse;
 using CollegeControlSystem.Application.Courses.GetCourseDetails;
 using CollegeControlSystem.Application.Courses.GetCourseList;
+using CollegeControlSystem.Application.Courses.GetPrerequisites;
 using CollegeControlSystem.Application.Courses.RemovePrerequisite;
+using CollegeControlSystem.Application.Courses.UpdateCourse;
 using CollegeControlSystem.Domain.Courses;
 using CollegeControlSystem.Domain.Identity;
 using MediatR;
@@ -146,6 +149,88 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             }
 
             return NoContent();
+        }
+
+        [HttpPut("{id:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> UpdateCourse(
+            Guid id,
+            [FromBody] UpdateCourseRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateCourseCommand(
+                id,
+                request.DepartmentId,
+                request.Title,
+                request.Description,
+                request.Credits,
+                request.LectureHours,
+                request.LabHours);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseErrors.CourseNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> DeleteCourse(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteCourseCommand(id);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseErrors.CourseNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == CourseErrors.HasOfferings || result.Error == CourseErrors.HasRegistrations)
+                {
+                    return Conflict(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("{id:guid}/prerequisites")]
+        [Authorize]
+        public async Task<IActionResult> GetPrerequisites(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetPrerequisitesQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseErrors.CourseNotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
         }
     }
 }

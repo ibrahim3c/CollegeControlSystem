@@ -31,6 +31,7 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .Include(co => co.Course)           // Include Title, Credits
                 .Include(co => co.Instructor)       // Include Instructor Name
                                                     // Querying Value Object properties
+                .Where(co => !co.IsCancelled)
                 .Where(co => co.Semester.Year == semester.Year && co.Semester.Term == semester.Term)
                 .OrderBy(co => co.Course.Code.Value)
                 .ToListAsync(cancellationToken);
@@ -65,6 +66,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<CourseOffering>().Update(offering);
         }
 
+        public void Delete(CourseOffering offering)
+        {
+            _context.Set<CourseOffering>().Remove(offering);
+        }
+
         public async Task<List<CourseOffering>> GetAvailableOfferingsAsync(
             Semester? semester,
             Guid? courseId,
@@ -78,6 +84,8 @@ namespace CollegeControlSystem.Infrastructure.Repositories
                 .AsQueryable();
 
             // 2. Conditionally append WHERE clauses based on provided parameters
+            query = query.Where(co => !co.IsCancelled);
+
             if (semester is not null)
             {
                 query = query.Where(co => co.Semester.Year == semester.Year && co.Semester.Term == semester.Term);
