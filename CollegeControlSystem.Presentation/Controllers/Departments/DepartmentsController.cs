@@ -175,7 +175,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         [HttpPut("programs/{programId:guid}/credits")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgramCredits(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             [FromBody] UpdateProgramCreditsRequest request,
             CancellationToken cancellationToken)
@@ -209,7 +209,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         [HttpGet("programs/{programId:guid}")]
         [Authorize]
         public async Task<IActionResult> GetProgramById(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             CancellationToken cancellationToken)
         {
@@ -230,7 +230,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         [HttpPut("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgram(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             [FromBody] UpdateProgramRequest request,
             CancellationToken cancellationToken)
@@ -257,7 +257,7 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         [HttpDelete("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteProgram(
-            Guid departmentId,
+            //Guid departmentId,
             Guid programId,
             CancellationToken cancellationToken)
         {
