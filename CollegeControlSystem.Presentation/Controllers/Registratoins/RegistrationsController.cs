@@ -1,11 +1,14 @@
-﻿using CollegeControlSystem.Application.Registrations.ApproveRegistration;
+﻿using CollegeControlSystem.Application.Registrations.AppealGrade;
+using CollegeControlSystem.Application.Registrations.ApproveRegistration;
 using CollegeControlSystem.Application.Registrations.DropCourse;
 using CollegeControlSystem.Application.Registrations.GetAvailableCourses;
+using CollegeControlSystem.Application.Registrations.GetGrade;
 using CollegeControlSystem.Application.Registrations.GetPendingRegistrations;
 using CollegeControlSystem.Application.Registrations.GetRegistrationById;
 using CollegeControlSystem.Application.Registrations.GetStudentRegistrations;
 using CollegeControlSystem.Application.Registrations.GetStudentSchedule;
 using CollegeControlSystem.Application.Registrations.RegisterCourse;
+using CollegeControlSystem.Application.Registrations.ReviewAppeal;
 using CollegeControlSystem.Application.Registrations.SubmitGrades;
 using CollegeControlSystem.Application.Registrations.WithdrawCourse;
 using CollegeControlSystem.Domain.CourseOfferings;
@@ -308,6 +311,98 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             }
 
             return Ok(new { Message = "Grades successfully submitted and applied." });
+        }
+
+        [HttpGet("{id:guid}/grade")]
+        [Authorize(Roles = Roles.StudentRole + "," + Roles.AdvisorRole + "," + Roles.AdminRole)]
+        public async Task<IActionResult> GetGrade(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetGradeQuery(id);
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == RegistrationErrors.NotFound || result.Error == GradeErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpPost("{id:guid}/grade/appeal")]
+        [Authorize(Roles = Roles.StudentRole)]
+        public async Task<IActionResult> AppealGrade(Guid id, [FromBody] AppealGradeRequest request, CancellationToken cancellationToken)
+        {
+            var studentIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(studentIdClaim, out Guid studentId))
+            {
+                return Unauthorized(new { Error = "Invalid user token." });
+            }
+
+            var command = new AppealGradeCommand(id, request.Reason);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == RegistrationErrors.NotFound || result.Error == GradeAppealErrors.NoGradeToAppeal)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == GradeAppealErrors.AlreadyAppealed)
+                {
+                    return Conflict(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return CreatedAtAction(nameof(GetGrade), new { id = result.Value }, new { appealId = result.Value });
+        }
+
+        [HttpPut("appeals/{id:guid}/review")]
+        [Authorize(Roles = Roles.AdminRole + "," + Roles.AdvisorRole)]
+        public async Task<IActionResult> ReviewAppeal(Guid id, [FromBody] ReviewAppealRequest request, CancellationToken cancellationToken)
+        {
+            var reviewerIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(reviewerIdClaim, out Guid reviewerId))
+            {
+                return Unauthorized(new { Error = "Invalid user token." });
+            }
+
+            if (!Enum.TryParse<GradeAppealStatus>(request.Status, true, out GradeAppealStatus status))
+            {
+                return BadRequest(new { Error = "Invalid appeal status. Must be 'Approved' or 'Rejected'." });
+            }
+
+            var command = new ReviewAppealCommand(id, status, request.ReviewNotes, reviewerId);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == GradeAppealErrors.NotFound)
+                {
+                    return NotFound(result.Error);
+                }
+
+                if (result.Error == GradeAppealErrors.AlreadyReviewed)
+                {
+                    return Conflict(result.Error);
+                }
+
+                return BadRequest(result.Error);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             CourseRepository = new CourseRepository(_appDbContext);
             GradeRepository = new GradeRepository(_appDbContext);
             RegistrationRepository = new RegistrationRepository(_appDbContext);
+            GradeAppealRepository = new GradeAppealRepository(_appDbContext);
         }
 
         public IStudentRepository StudentRepository { get; private set; }
@@ -38,6 +39,8 @@ namespace CollegeControlSystem.Infrastructure.Repositories
         public IGradeRepository GradeRepository { get; private set; }
 
         public IRegistrationRepository RegistrationRepository { get; private set; }
+
+        public IGradeAppealRepository GradeAppealRepository { get; private set; }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
