@@ -16,6 +16,7 @@ public interface IUnitOfWork
     ICourseRepository CourseRepository{ get; }
     IGradeRepository GradeRepository{ get; }
     IRegistrationRepository RegistrationRepository{ get; }
+    IGradeAppealRepository GradeAppealRepository{ get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
