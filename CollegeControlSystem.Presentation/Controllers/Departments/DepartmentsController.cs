@@ -28,6 +28,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             _sender = sender;
         }
 
+        /// <summary>
+        /// Creates a new department. Requires Admin role.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateDepartment(
@@ -47,6 +50,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return CreatedAtAction(nameof(GetDepartments), new { id = result.Value }, result.Value);
         }
 
+        /// <summary>
+        /// Retrieves all departments with their programs. Requires authentication.
+        /// </summary>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetDepartments(CancellationToken cancellationToken)
@@ -64,6 +70,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets department details by ID. Requires authentication.
+        /// </summary>
         [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetDepartmentById(Guid id, CancellationToken cancellationToken)
@@ -80,6 +89,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Updates department information. Requires Admin role.
+        /// </summary>
         [HttpPut("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateDepartment(
@@ -105,6 +117,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return NoContent(); // Standard 204 response for updates
         }
 
+        /// <summary>
+        /// Deletes a department. Requires Admin role.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteDepartment(Guid id, CancellationToken cancellationToken)
@@ -128,6 +143,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
 
         // --- Program Sub-Resources ---
 
+        /// <summary>
+        /// Adds a program to a department. Requires Admin role.
+        /// </summary>
         [HttpPost("{departmentId:guid}/programs")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> AddProgram(
@@ -155,6 +173,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets all programs with their associated departments. Requires authentication.
+        /// </summary>
         [HttpGet("programs")]
         [Authorize]
         public async Task<IActionResult> GetAllPrograms(CancellationToken cancellationToken)
@@ -172,6 +193,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         //[HttpPut("{departmentId:guid}/programs/{programId:guid}/credits")]
+        /// <summary>
+        /// Updates the required credits for a program. Requires Admin role.
+        /// </summary>
         [HttpPut("programs/{programId:guid}/credits")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgramCredits(
@@ -206,6 +230,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         //[HttpGet("{departmentId:guid}/programs/{programId:guid}")]
+        /// <summary>
+        /// Gets program details by ID. Requires authentication.
+        /// </summary>
         [HttpGet("programs/{programId:guid}")]
         [Authorize]
         public async Task<IActionResult> GetProgramById(
@@ -227,6 +254,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         //[HttpPut("{departmentId:guid}/programs/{programId:guid}")]
+        /// <summary>
+        /// Updates program information. Requires Admin role.
+        /// </summary>
         [HttpPut("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateProgram(
@@ -254,6 +284,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Departments
         }
 
         //[HttpDelete("{departmentId:guid}/programs/{programId:guid}")]
+        /// <summary>
+        /// Deletes a program. Requires Admin role.
+        /// </summary>
         [HttpDelete("programs/{programId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteProgram(

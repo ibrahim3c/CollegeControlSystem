@@ -1,4 +1,5 @@
 ﻿using CollegeControlSystem.Application.ControlEngine.GetGraduates;
+using CollegeControlSystem.Application.ControlEngine.GetStatistics;
 using CollegeControlSystem.Application.ControlEngine.GetWarnings;
 using CollegeControlSystem.Application.ControlEngine.RunEngine;
 using CollegeControlSystem.Domain.Identity;
@@ -51,6 +52,22 @@ namespace CollegeControlSystem.Presentation.Controllers.ControlEngine
             {
                 return BadRequest(result.Error);
             }
+
+            return Ok(result.Value);
+        }
+
+        /// <summary>
+        /// Returns general academic statistics dashboard.
+        /// </summary>
+        [HttpGet("statistics")]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> GetStatistics(CancellationToken cancellationToken)
+        {
+            var query = new GetStatisticsQuery();
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
 
             return Ok(result.Value);
         }

@@ -33,6 +33,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             _sender = sender;
         }
 
+        /// <summary>
+        /// Registers a student for a course offering. Requires Student role.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> RegisterCourse(
@@ -71,6 +74,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
                 new { registrationId = result.Value });
         }
 
+        /// <summary>
+        /// Approves a pending registration. Requires Advisor or Admin role.
+        /// </summary>
         [HttpPut("{id:guid}/approve")]
         [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> ApproveRegistration(
@@ -101,6 +107,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return NoContent();
         }
 
+        /// <summary>
+        /// Drops a registered course. Requires Student role.
+        /// </summary>
         [HttpPut("{id:guid}/drop")]
         [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> DropCourse(
@@ -131,6 +140,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return NoContent();
         }
 
+        /// <summary>
+        /// Withdraws from a course after the drop period. Requires Student role.
+        /// </summary>
         [HttpPut("{id:guid}/withdraw")]
         [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> WithdrawCourse(
@@ -160,6 +172,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return NoContent();
         }
 
+        /// <summary>
+        /// Gets pending registrations for an advisor. Requires Advisor or Admin role.
+        /// </summary>
         [HttpGet("pending")]
         [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetPendingRegistrations(
@@ -178,6 +193,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets a student's current schedule. Requires Student role.
+        /// </summary>
         [HttpGet("schedule/{studentId:guid}")]
         [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> GetStudentSchedule(
@@ -232,6 +250,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets all registrations for a student. Requires Student, Advisor, or Admin role.
+        /// </summary>
         [HttpGet("student/{studentId:guid}")]
         [Authorize(Roles = Roles.StudentRole + "," + Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetStudentRegistrations(
@@ -255,6 +276,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets registration details by ID. Requires authentication.
+        /// </summary>
         [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetById(
@@ -313,6 +337,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return Ok(new { Message = "Grades successfully submitted and applied." });
         }
 
+        /// <summary>
+        /// Gets the grade for a registration. Requires Student, Advisor, or Admin role.
+        /// </summary>
         [HttpGet("{id:guid}/grade")]
         [Authorize(Roles = Roles.StudentRole + "," + Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetGrade(Guid id, CancellationToken cancellationToken)
@@ -334,6 +361,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Appeals a grade. Requires Student role.
+        /// </summary>
         [HttpPost("{id:guid}/grade/appeal")]
         [Authorize(Roles = Roles.StudentRole)]
         public async Task<IActionResult> AppealGrade(Guid id, [FromBody] AppealGradeRequest request, CancellationToken cancellationToken)
@@ -367,6 +397,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Registratoins
             return CreatedAtAction(nameof(GetGrade), new { id = result.Value }, new { appealId = result.Value });
         }
 
+        /// <summary>
+        /// Reviews a grade appeal. Requires Admin or Advisor role.
+        /// </summary>
         [HttpPut("appeals/{id:guid}/review")]
         [Authorize(Roles = Roles.AdminRole + "," + Roles.AdvisorRole)]
         public async Task<IActionResult> ReviewAppeal(Guid id, [FromBody] ReviewAppealRequest request, CancellationToken cancellationToken)

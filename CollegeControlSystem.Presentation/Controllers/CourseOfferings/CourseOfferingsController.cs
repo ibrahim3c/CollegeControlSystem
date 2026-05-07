@@ -3,6 +3,7 @@ using CollegeControlSystem.Application.CourseOfferings.ChangeInstructor;
 using CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.DeleteCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings;
+using CollegeControlSystem.Application.CourseOfferings.GetOfferingAnalytics;
 using CollegeControlSystem.Application.CourseOfferings.GetOfferingById;
 using CollegeControlSystem.Application.CourseOfferings.GetRoster;
 using CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacity;
@@ -28,6 +29,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             _sender = sender;
         }
 
+        /// <summary>
+        /// Creates a new course offering for a specific semester. Requires Admin role.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateCourseOffering(
@@ -53,6 +57,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             return CreatedAtAction(nameof(GetAvailableOfferings), new { term = request.Term, year = request.Year }, result.Value);
         }
 
+        /// <summary>
+        /// Retrieves available course offerings with optional filters (term, year, course, instructor). Requires authentication.
+        /// </summary>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAvailableOfferings(
@@ -76,6 +83,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Updates the capacity of a course offering. Requires Admin role.
+        /// </summary>
         [HttpPut("{id:guid}/capacity")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateCapacity(
@@ -100,6 +110,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             return NoContent();
         }
 
+        /// <summary>
+        /// Changes the instructor assigned to a course offering. Requires Admin role.
+        /// </summary>
         [HttpPut("{id:guid}/instructor")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> ChangeInstructor(
@@ -123,6 +136,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
 
             return NoContent();
         }
+        /// <summary>
+        /// Gets the student roster for a course offering. Requires Professor or Admin role.
+        /// </summary>
         [HttpGet("{id:guid}/roster")]
         [Authorize(Roles = Roles.ProfessorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetCourseRoster(Guid id, CancellationToken cancellationToken)
@@ -174,6 +190,30 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
                 fileDownloadName: result.Value.FileName);
         }
 
+        /// <summary>
+        /// Returns enrollment and grade analytics for a course offering. Requires Admin or Professor role.
+        /// </summary>
+        [HttpGet("{id:guid}/analytics")]
+        [Authorize(Roles = Roles.AdminRole + "," + Roles.ProfessorRole)]
+        public async Task<IActionResult> GetOfferingAnalytics(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetOfferingAnalyticsQuery(id);
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseOfferingErrors.OfferingNotFound)
+                    return NotFound(result.Error);
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        /// <summary>
+        /// Gets course offering details by ID. Requires authentication.
+        /// </summary>
         [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetById(
@@ -197,6 +237,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Deletes a course offering. Requires Admin role.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteOffering(
@@ -225,6 +268,9 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
             return NoContent();
         }
 
+        /// <summary>
+        /// Cancels a course offering. Requires Admin role.
+        /// </summary>
         [HttpPut("{id:guid}/cancel")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CancelOffering(

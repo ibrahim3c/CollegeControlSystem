@@ -92,9 +92,11 @@ namespace CollegeControlSystem.Infrastructure.Repositories
             _context.Set<Registration>().Update(registration);
         }
 
-        public Task<List<Registration>> GetByOfferingIdAsync(Guid courseOfferingId, CancellationToken cancellationToken = default)
+        public async Task<List<Registration>> GetByOfferingIdAsync(Guid courseOfferingId, CancellationToken cancellationToken = default)
         {
-            return _context.Set<Registration>()
+            return await _context.Set<Registration>()
+                .Include(r => r.Student)
+                .Include(r => r.Grade)
                 .Where(r => r.CourseOfferingId == courseOfferingId)
                 .ToListAsync(cancellationToken);
         }

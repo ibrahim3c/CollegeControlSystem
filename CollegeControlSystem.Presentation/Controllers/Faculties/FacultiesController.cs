@@ -145,6 +145,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
 
         // --- INSTRUCTOR ROLE ENDPOINTS ---
 
+        /// <summary>
+        /// Gets courses taught by an instructor. Requires Professor or Admin role.
+        /// </summary>
         [HttpGet("{id}/courses")]
         [Authorize(Roles = Roles.ProfessorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetInstructorCourses(Guid id, CancellationToken cancellationToken)
@@ -162,6 +165,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Faculties
 
         // --- ADVISOR ROLE ENDPOINTS ---
 
+        /// <summary>
+        /// Gets students advised by an advisor. Requires Advisor or Admin role.
+        /// </summary>
         [HttpGet("{id}/advisees")]
         [Authorize(Roles = Roles.AdvisorRole + "," + Roles.AdminRole)]
         public async Task<IActionResult> GetAdvisorStudents(Guid id, CancellationToken cancellationToken)
