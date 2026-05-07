@@ -25,6 +25,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             _sender = sender;
         }
 
+        /// <summary>
+        /// Creates a new student. Requires Admin role.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles=Roles.AdminRole)]
         public async Task<IActionResult> CreateStudent([FromBody] CreateStudentCommand command, CancellationToken cancellationToken)
@@ -39,6 +42,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return CreatedAtAction(nameof(GetStudentProfile), new { id = result.Value }, result.Value);
         }
 
+        /// <summary>
+        /// Gets all students with optional academic status filter. Requires Admin role.
+        /// </summary>
         [HttpGet]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> GetAllStudents([FromQuery] AcademicStatus? status, CancellationToken cancellationToken)
@@ -55,6 +61,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return Ok(allResult.Value);
         }
 
+        /// <summary>
+        /// Gets student profile information. Accessible to all users.
+        /// </summary>
         [HttpGet("{id}/profile")]
         public async Task<IActionResult> GetStudentProfile(Guid id, CancellationToken cancellationToken)
         {
@@ -69,6 +78,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets a student's academic transcript with semester-by-semester grades and SGPA. Accessible to all users.
+        /// </summary>
         [HttpGet("{id}/transcript")]
         public async Task<IActionResult> GetTranscript(Guid id, CancellationToken cancellationToken)
         {
@@ -83,6 +95,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Updates student profile details. Accessible to all users.
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProfile(Guid id, [FromBody] UpdateStudentProfileRequest request, CancellationToken cancellationToken)
         {
@@ -98,6 +113,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return NoContent();
         }
 
+        /// <summary>
+        /// Assigns an advisor to a student. Accessible to all users.
+        /// </summary>
         [HttpPut("{id}/assign-advisor")]
         public async Task<IActionResult> AssignAdvisor(Guid id, [FromBody] AssignAdvisorRequest request, CancellationToken cancellationToken)
         {
@@ -112,6 +130,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Students
             return NoContent();
         }
 
+        /// <summary>
+        /// Dismisses a student. Requires Admin role.
+        /// </summary>
         [HttpPut("{id}/dismiss")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DismissStudent(Guid id, CancellationToken cancellationToken)

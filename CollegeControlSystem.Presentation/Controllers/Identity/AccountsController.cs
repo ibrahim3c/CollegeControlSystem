@@ -23,6 +23,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             _sender = sender;
         }
 
+        /// <summary>
+        /// Gets the currently authenticated user's profile. Requires authentication.
+        /// </summary>
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
@@ -32,6 +35,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
+        /// <summary>
+        /// Authenticates a user and returns JWT and refresh tokens. No authentication required.
+        /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
@@ -79,6 +85,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
         //    return Ok(result.Value);
         //}
 
+        /// <summary>
+        /// Refreshes an expired JWT using a valid refresh token. No authentication required.
+        /// </summary>
         [HttpPost("refresh-token")]
         [AllowAnonymous] // Needs to be anonymous because the Access Token might already be expired
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
@@ -94,6 +103,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Revokes a refresh token (logout). Requires authentication.
+        /// </summary>
         [HttpPost("revoke-token")]
         [Authorize]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest request, CancellationToken cancellationToken)
@@ -110,6 +122,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return NoContent();
         }
 
+        /// <summary>
+        /// Sends a password reset email. No authentication required.
+        /// </summary>
         [HttpPost("forget-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request, CancellationToken cancellationToken)
@@ -127,6 +142,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return Ok(new { message = result.Value });
         }
 
+        /// <summary>
+        /// Resets a user's password using a reset token. No authentication required.
+        /// </summary>
         [HttpPost("reset-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
@@ -142,6 +160,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Identity
             return Ok(new { message = result.Value });
         }
 
+        /// <summary>
+        /// Locks or unlocks a user account. Requires Admin role.
+        /// </summary>
         [HttpPut("lock-unlock/{userId:int}")] // Assuming UserID is int based on TPT Schema
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> LockUnlockUser(LockUnlockRequest request, CancellationToken cancellationToken)

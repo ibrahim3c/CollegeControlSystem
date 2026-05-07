@@ -25,6 +25,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             _sender = sender;
         }
 
+        /// <summary>
+        /// Creates a new course. Requires Admin role.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> CreateCourse(
@@ -57,6 +60,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return CreatedAtAction(nameof(GetCourseDetails), new { id = result.Value }, result.Value);
         }
 
+        /// <summary>
+        /// Retrieves a list of courses, optionally filtered by department. Requires authentication.
+        /// </summary>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetCourseList(
@@ -75,6 +81,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Gets course details by ID. Requires authentication.
+        /// </summary>
         [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetCourseDetails(
@@ -100,6 +109,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
 
         // --- Prerequisite Sub-Resources ---
 
+        /// <summary>
+        /// Adds a prerequisite to a course. Requires Admin role.
+        /// </summary>
         [HttpPost("{id:guid}/prerequisites")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> AddPrerequisite(
@@ -127,6 +139,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return NoContent(); // 204 No Content is standard for "Action completed, nothing to return"
         }
 
+        /// <summary>
+        /// Removes a prerequisite from a course. Requires Admin role.
+        /// </summary>
         [HttpDelete("{id:guid}/prerequisites/{prerequisiteId:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> RemovePrerequisite(
@@ -151,6 +166,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return NoContent();
         }
 
+        /// <summary>
+        /// Updates course information. Requires Admin role.
+        /// </summary>
         [HttpPut("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> UpdateCourse(
@@ -182,6 +200,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a course. Requires Admin role.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = Roles.AdminRole)]
         public async Task<IActionResult> DeleteCourse(
@@ -210,6 +231,9 @@ namespace CollegeControlSystem.Presentation.Controllers.Courses
             return NoContent();
         }
 
+        /// <summary>
+        /// Gets prerequisites for a course. Requires authentication.
+        /// </summary>
         [HttpGet("{id:guid}/prerequisites")]
         [Authorize]
         public async Task<IActionResult> GetPrerequisites(
