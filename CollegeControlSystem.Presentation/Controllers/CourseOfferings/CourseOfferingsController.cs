@@ -3,6 +3,7 @@ using CollegeControlSystem.Application.CourseOfferings.ChangeInstructor;
 using CollegeControlSystem.Application.CourseOfferings.CreateCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.DeleteCourseOffering;
 using CollegeControlSystem.Application.CourseOfferings.GetAvailableOfferings;
+using CollegeControlSystem.Application.CourseOfferings.GetOfferingAnalytics;
 using CollegeControlSystem.Application.CourseOfferings.GetOfferingById;
 using CollegeControlSystem.Application.CourseOfferings.GetRoster;
 using CollegeControlSystem.Application.CourseOfferings.UpdateOfferingCapacity;
@@ -172,6 +173,24 @@ namespace CollegeControlSystem.Presentation.Controllers.CourseOfferings
                 fileContents: result.Value.Content,
                 contentType: result.Value.ContentType,
                 fileDownloadName: result.Value.FileName);
+        }
+
+        [HttpGet("{id:guid}/analytics")]
+        [Authorize(Roles = Roles.AdminRole + "," + Roles.ProfessorRole)]
+        public async Task<IActionResult> GetOfferingAnalytics(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new GetOfferingAnalyticsQuery(id);
+            var result = await _sender.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                if (result.Error == CourseOfferingErrors.OfferingNotFound)
+                    return NotFound(result.Error);
+
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
         }
 
         [HttpGet("{id:guid}")]
